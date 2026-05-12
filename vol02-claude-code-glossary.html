@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Claude Code を使うなら知っておきたい用語集</title>
+<meta name="description" content="Claude Codeを本格的に使い始めた人のために、現場で頻出する用語を、やさしい日本語で解説した実践用語集。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#555;
+    --ink-mute:#888;
+    --paper:#fafaf7;
+    --line:#e8e4dc;
+    --line-soft:#f0ece4;
+    --accent:#c7654a;
+    --accent-soft:#fce8e1;
+    --accent-deep:#a14a32;
+    --bg-card:#ffffff;
+    --code-bg:#f5f1ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px}
+  body{
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.85;
+    letter-spacing:.02em;
+    -webkit-font-smoothing:antialiased;
+  }
+  header.hero{padding:90px 24px 60px;text-align:center;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,var(--paper) 100%)}
+  .hero-eyebrow{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+  h1.hero-title{font-size:clamp(28px,5.5vw,46px);font-weight:900;line-height:1.4;color:var(--ink);max-width:780px;margin:0 auto 18px;letter-spacing:.04em}
+  .hero-sub{font-size:15px;color:var(--ink-soft);max-width:560px;margin:18px auto 0}
+  .hero-vol{display:inline-block;margin-top:28px;padding:6px 14px;border:1px solid var(--line);border-radius:20px;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.2em;color:var(--ink-mute);background:#fff}
+  .container{max-width:780px;margin:0 auto;padding:0 24px}
+  .intro{padding:60px 0}
+  .intro h2{font-size:22px;font-weight:900;margin-bottom:24px;letter-spacing:.05em}
+  .intro h2::before{content:"📖 "}
+  .intro p{margin-bottom:18px;color:var(--ink-soft);font-size:15px}
+  .intro strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .toc{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:60px}
+  .toc h3{font-size:15px;font-weight:900;margin-bottom:20px;letter-spacing:.1em}
+  .toc h3::before{content:"Contents";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .toc ol{list-style:none;padding:0}
+  .toc ol li{border-bottom:1px dashed var(--line);padding:10px 0}
+  .toc ol li:last-child{border-bottom:0}
+  .toc ol li a{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14px;gap:12px}
+  .toc ol li a:hover{color:var(--accent)}
+  .toc-num{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent);font-size:12px;flex-shrink:0}
+  .toc-count{font-family:"Inter",sans-serif;font-size:11px;color:var(--ink-mute);flex-shrink:0}
+  .toc-name{flex:1;border-bottom:1px dotted var(--line);padding-bottom:2px}
+  section.chapter{padding:60px 0 40px;border-top:1px solid var(--line)}
+  .chapter-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:40px}
+  .chapter-num{font-family:"Inter",serif;font-size:64px;font-weight:900;line-height:1;color:var(--accent-soft);flex-shrink:0;letter-spacing:-.02em}
+  .chapter-title-block{flex:1;padding-top:4px}
+  .chapter-title-block h2{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:.04em;line-height:1.4}
+  .chapter-desc{color:var(--ink-soft);font-size:14px}
+  .chapter-count{display:inline-block;margin-top:10px;font-family:"Inter",sans-serif;font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700}
+  .term{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:28px 30px;margin-bottom:18px;transition:border-color .2s ease}
+  .term:hover{border-color:var(--accent)}
+  .term-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+  .term-icon{font-size:24px;line-height:1.2;flex-shrink:0;width:36px;text-align:center}
+  .term-name-block{flex:1}
+  .term-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:.02em}
+  .term-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);margin-top:2px;letter-spacing:.05em}
+  .term-hitokoto{background:var(--accent-soft);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+  .term-hitokoto::before{content:"ひとことで";display:block;font-size:10px;font-weight:900;color:var(--accent-deep);letter-spacing:.2em;margin-bottom:4px}
+  .term-hitokoto p{font-size:15px;font-weight:700;color:var(--ink);line-height:1.6}
+  .term-detail{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .term-detail strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .term-detail code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:"Inter",monospace;font-size:90%;color:var(--accent-deep)}
+  .term-scene{background:var(--code-bg);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink-soft)}
+  .term-scene::before{content:"場面 ";font-weight:900;color:var(--accent-deep);font-size:11px;letter-spacing:.15em}
+  .cmd-section{padding:60px 0;border-top:1px solid var(--line)}
+  .cmd-table{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cmd-row{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:16px 24px;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .cmd-row:last-child{border-bottom:0}
+  .cmd-key{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent-deep)}
+  .cmd-desc{color:var(--ink-soft)}
+  .closing{padding:70px 0;border-top:1px solid var(--line);text-align:center}
+  .closing h2{font-size:22px;font-weight:900;margin-bottom:20px;letter-spacing:.05em}
+  .closing p{color:var(--ink-soft);font-size:15px;max-width:560px;margin:0 auto 16px}
+  .closing-steps{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-top:32px;text-align:left}
+  .closing-steps h3{font-size:15px;font-weight:900;margin-bottom:16px}
+  .closing-steps h3::before{content:"Next Steps";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .closing-steps ol{padding-left:24px;color:var(--ink-soft);font-size:14px}
+  .closing-steps ol li{margin-bottom:10px;line-height:1.7}
+  footer{padding:50px 24px 60px;text-align:center;border-top:1px solid var(--line);background:#fff}
+  .footer-mark{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--ink-mute);margin-bottom:10px;font-weight:600;text-transform:uppercase}
+  .footer-brand{font-family:"Inter",sans-serif;font-size:18px;font-weight:900;color:var(--ink);letter-spacing:.15em;margin-bottom:8px}
+  .footer-meta{font-size:11px;color:var(--ink-mute);letter-spacing:.05em}
+  @media(max-width:560px){
+    .container{padding:0 18px}
+    header.hero{padding:60px 18px 40px}
+    .chapter-header{gap:16px}
+    .chapter-num{font-size:48px}
+    .chapter-title-block h2{font-size:19px}
+    .term{padding:22px 20px}
+    .term-name{font-size:17px}
+    .cmd-row{grid-template-columns:1fr;gap:4px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">Claude Code Glossary</div>
+  <h1 class="hero-title">Claude Code を使うなら<br>知っておきたい用語集</h1>
+  <p class="hero-sub">本格的にClaude Codeを使い始めた人のために、現場で頻出する用語を、やさしい日本語で。</p>
+  <div class="hero-vol">VOL. 02 ／ 実践編</div>
+</header>
+
+<div class="container">
+
+  <section class="intro">
+    <h2>この用語集の使い方</h2>
+    <p>この用語集は、<strong>Claude Codeを触り始めて、もう少し奥を知りたい</strong>人のためのものです。</p>
+    <p>Vol.01でAIの基本を押さえた人が、いざClaude Codeを使い始めると、「MCP？」「サブエージェント？」「ハーネス？」と、また聞き慣れない言葉に出会います。これらは、AIを「使う」から「自分の道具として手なずける」への入口にある言葉たちです。</p>
+    <p>一気に覚える必要はありません。Claude Codeを触っていて「あれ、これ何だっけ？」と思ったら、このページに戻ってきてください。<strong>気になったところだけ拾い読みで十分</strong>です。</p>
+    <p>Vol.01の延長線上にあり、Vol.03（AIエージェントを作るなら知っておきたい用語集）への橋渡しでもあります。3冊あわせて、AIを使う側から「設計する側」へのステップアップを支える設計になっています。</p>
+  </section>
+
+  <div class="toc">
+    <h3>もくじ</h3>
+    <ol>
+      <li><a href="#ch1"><span class="toc-num">01</span><span class="toc-name">Claude Codeを理解する核心の用語</span><span class="toc-count">7語</span></a></li>
+      <li><a href="#ch2"><span class="toc-num">02</span><span class="toc-name">Claude Codeを動かす環境</span><span class="toc-count">6語</span></a></li>
+      <li><a href="#ch3"><span class="toc-num">03</span><span class="toc-name">Claude Codeの主要機能と操作</span><span class="toc-count">10語</span></a></li>
+      <li><a href="#ch4"><span class="toc-num">04</span><span class="toc-name">拡張・連携の仕組み</span><span class="toc-count">8語</span></a></li>
+      <li><a href="#ch5"><span class="toc-num">05</span><span class="toc-name">ファイル操作の基礎知識</span><span class="toc-count">7語</span></a></li>
+      <li><a href="#ch6"><span class="toc-num">06</span><span class="toc-name">Gitとバージョン管理の基本</span><span class="toc-count">10語</span></a></li>
+      <li><a href="#cmd"><span class="toc-num">+</span><span class="toc-name">よく使うコマンド早見表</span><span class="toc-count"></span></a></li>
+    </ol>
+  </div>
+
+  <!-- ========== Chapter 1 ========== -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-title-block">
+        <h2>Claude Codeを理解する核心の用語</h2>
+        <p class="chapter-desc">Claude Codeを使う上で、最初に押さえておきたい7つの言葉。これだけで全体像が見えます。</p>
+        <span class="chapter-count">7 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⚒️</div><div class="term-name-block"><div class="term-name">Claude Code</div><div class="term-en">Claude Code</div></div></div>
+      <div class="term-hitokoto"><p>Anthropic公式の、AIエージェント機能付き開発ツール。ファイル操作・コード作成・実行までこなす。</p></div>
+      <p class="term-detail">通常のClaude（チャット型）が「会話する相手」だとすると、Claude Codeは<strong>「実際に手を動かす助手」</strong>。あなたのPC上のファイルを読み・書き・実行し、必要なら外部ツールも使ってくれます。開発者向けですが、最近は「コードを書かない人」でも使える場面が増えています。</p>
+      <div class="term-scene">「Claudeとチャットで相談する」から「Claudeに実作業を任せる」へ進む、ちょうどその橋渡しになるのがClaude Codeです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧠</div><div class="term-name-block"><div class="term-name">コンテキストウィンドウ</div><div class="term-en">Context Window</div></div></div>
+      <div class="term-hitokoto"><p>AIが今の会話で「一度に覚えていられる」情報量の上限のこと。</p></div>
+      <p class="term-detail">人間も一度に分厚い本を10冊同時に読めないように、AIにも処理できる情報量の限界があります。これがコンテキストウィンドウ。会話が長くなったり、巨大ファイルを読ませると、<strong>古い内容から忘れていく</strong>仕組みです。Claude Opus 4系では数十万トークン規模に拡張されています。</p>
+      <div class="term-scene">「最初に伝えた前提をClaudeが忘れている」と感じたら、コンテキストが一杯になっている合図。要約コマンドで圧縮するか、新規セッションを始めましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔢</div><div class="term-name-block"><div class="term-name">トークン</div><div class="term-en">Token</div></div></div>
+      <div class="term-hitokoto"><p>AIが文章を処理するときの最小単位。料金・速度・記憶量がすべてこれで決まる。</p></div>
+      <p class="term-detail">人間は「文字数」で考えますが、AIは「トークン数」で考えます。日本語だとざっくり<strong>1文字あたり1〜3トークン</strong>くらい（文字の種類で変動）。Claude Codeを使うと、「いまセッションで何トークン使ったか」が表示されるので、長文を扱う時は意識しておくと良いでしょう。</p>
+      <div class="term-scene">「このAIは100万トークン対応」と言われたら、「日本語でざっくり原稿用紙1,000枚分を一気に処理できる」とイメージすればOKです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💬</div><div class="term-name-block"><div class="term-name">セッション</div><div class="term-en">Session</div></div></div>
+      <div class="term-hitokoto"><p>Claude Codeを起動してから終了するまでの「1回の作業」のかたまり。</p></div>
+      <p class="term-detail">1セッションの中ではClaudeが会話の流れを覚えています。<strong>セッションを閉じると、原則として会話の記憶はリセット</strong>（ただしメモリ機能で重要情報は引き継がれます）。プロジェクトファイル自体は残るので、次のセッションでもファイルからは状況把握ができます。</p>
+      <div class="term-scene">「Claudeが急に話の流れを忘れた」「文脈がぐちゃぐちゃになってきた」と感じたら、思い切ってセッションを切り替えるのが正解です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⚙️</div><div class="term-name-block"><div class="term-name">モデル</div><div class="term-en">Model</div></div></div>
+      <div class="term-hitokoto"><p>Claudeの「頭脳」のグレード違い。性能・速度・料金の組み合わせで選ぶ。</p></div>
+      <p class="term-detail">Claudeには Opus（最高性能・じっくり）、Sonnet（バランス型・万能）、Haiku（高速・軽量）の3系統があります。<strong>難しい設計やコード生成はOpus、ざっと整理する作業はHaiku</strong>のように使い分けると、時間と料金の両方が節約できます。Claude Codeでは <code>/model</code> コマンドで切り替え可能。</p>
+      <div class="term-scene">「常にOpusで使う」は富裕層の贅沢な使い方。賢く使い分けることで、月の請求が大きく変わってきます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🤔</div><div class="term-name-block"><div class="term-name">拡張思考</div><div class="term-en">Extended Thinking</div></div></div>
+      <div class="term-hitokoto"><p>Claudeが回答する前に「内部でじっくり考える」ステップを挟むモード。</p></div>
+      <p class="term-detail">複雑な問題に対して、いきなり答えを書き始めるのではなく、<strong>段階的に推論してから回答する</strong>機能。数学の「途中式」を頭の中で書くイメージです。Claude Codeでは「Thinking...」表示中にこの拡張思考が動いています。回答の精度が上がる代わりに、少し時間がかかります。</p>
+      <div class="term-scene">バグの原因究明、複雑なロジック設計、論理が必要な意思決定など、ミスが許されない作業ほど拡張思考の真価が発揮されます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔧</div><div class="term-name-block"><div class="term-name">ハーネス</div><div class="term-en">Harness</div></div></div>
+      <div class="term-hitokoto"><p>AIモデルを「実際に仕事ができる状態」にする外側の仕組み全体。Claude Code自体がハーネス。</p></div>
+      <p class="term-detail">Claude（AIモデル）はそのままでは文章を返すだけ。これに<strong>ファイル操作・コマンド実行・Web検索などのツール、許可管理、記憶機能</strong>を装着して、実際に作業できるエージェントに仕立てた装置がハーネスです。Claude Code、Cursor、Cowork、Managed Agentsはすべてハーネスの仲間。デスクトップ版もVS Code版もCLI版も、外見は違っても中身のハーネスは同じです。</p>
+      <div class="term-scene">2026年AI業界の最大の競争領域。「どのモデルか」より「どのハーネスで動かすか」のほうがビジネス成果を左右します。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 2 ========== -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-title-block">
+        <h2>Claude Codeを動かす環境</h2>
+        <p class="chapter-desc">同じClaude Codeでも、使う「場所」はいろいろ。自分のスタイルに合った環境を選ぼう。</p>
+        <span class="chapter-count">6 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🖥️</div><div class="term-name-block"><div class="term-name">デスクトップアプリ</div><div class="term-en">Desktop App</div></div></div>
+      <div class="term-hitokoto"><p>インストールするだけで使える、一番手軽なClaude Code環境。</p></div>
+      <p class="term-detail">日本語UIで操作が分かりやすく、設定もほぼ不要。<strong>初めてClaude Codeに触れる人の入口</strong>として最適です。Macなら .dmg、Windowsなら .exe を公式サイトからダウンロードしてインストール。最近はCowork機能（バックグラウンド作業）の追加で、非エンジニアにも使いやすくなりました。</p>
+      <div class="term-scene">「とりあえずClaude Codeを試してみたい」「ターミナルは怖い」という人は、迷わずデスクトップアプリから始めましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⌨️</div><div class="term-name-block"><div class="term-name">CLI（コマンドライン版）</div><div class="term-en">Command Line Interface</div></div></div>
+      <div class="term-hitokoto"><p>ターミナルから文字だけで操作する、Claude Codeのオリジナル形式。</p></div>
+      <p class="term-detail">マウスやボタンを使わず、<strong>キーボードだけで完結する操作方式</strong>。ターミナル（Macの場合）またはコマンドプロンプト・PowerShell（Windowsの場合）から <code>claude</code> と打つだけで起動します。慣れると圧倒的に速く、自動化との相性も抜群。本格的にコーディングする人にはこちらが定番。</p>
+      <div class="term-scene">「マウスを動かす時間がもったいない」「シェルスクリプトと組み合わせたい」というレベルになったら、CLIに進化するタイミングです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧩</div><div class="term-name-block"><div class="term-name">VS Code拡張</div><div class="term-en">VS Code Extension</div></div></div>
+      <div class="term-hitokoto"><p>世界一使われているコードエディタに、Claude Codeを組み込む拡張機能。</p></div>
+      <p class="term-detail">VS Code（Visual Studio Code）はMicrosoftが提供する人気No.1のコードエディタ。これにClaude Codeの拡張機能を入れると、<strong>コードを書きながら横でClaudeに相談</strong>できる開発環境が完成します。プログラミングを本格的にする人には、最強の組み合わせの1つ。Cursorも同系統の選択肢です。</p>
+      <div class="term-scene">「日常的にコードを書く」人なら、VS Code＋Claude Code拡張で生産性が一段上に。書きながら相談、レビュー、リファクタリングがシームレスに行えます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🌐</div><div class="term-name-block"><div class="term-name">Webアプリ版</div><div class="term-en">Web App</div></div></div>
+      <div class="term-hitokoto"><p>ブラウザだけで動く、インストール不要のClaude Code。</p></div>
+      <p class="term-detail">claude.ai/code にアクセスすれば即使えます。<strong>クラウド上で実行されるので、自分のPC環境に左右されない</strong>のがメリット。会社のPCにソフトを入れられない、外出先のサブPCで使いたい、といった場面で重宝します。ファイルもクラウド上で扱うので、PCを変えても続きから作業できます。</p>
+      <div class="term-scene">「環境構築に手間をかけたくない」「複数のPCを行き来する」人にぴったり。ただし機微な情報を扱う場合はセキュリティ要件を確認しましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🛠️</div><div class="term-name-block"><div class="term-name">IDE（統合開発環境）</div><div class="term-en">Integrated Development Environment</div></div></div>
+      <div class="term-hitokoto"><p>コードを書く・実行する・デバッグするが、ひとつのソフトで全部できる「作業台」。</p></div>
+      <p class="term-detail">プログラミングに必要な道具がまとまったソフトウェアの総称。<strong>VS Code、JetBrains（IntelliJ・PyCharm等）、Eclipse、Xcode</strong>などが代表例。Claude CodeをIDEと組み合わせると、「AIアシスタント付きの作業台」になります。コードを書く・読む・直すという日常作業が、ぐっと楽になります。</p>
+      <div class="term-scene">エンジニアの会議で「IDEで開いて」と言われたら、「VS Code等でファイルを開いてくれ」という意味だと理解しておけば大丈夫です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🤝</div><div class="term-name-block"><div class="term-name">Cowork（コワーク）</div><div class="term-en">Claude Cowork</div></div></div>
+      <div class="term-hitokoto"><p>Claudeに作業を「お願いしておく」感覚で任せられる、バックグラウンド作業機能。</p></div>
+      <p class="term-detail">通常のチャットがリアルタイム会話なら、Coworkは<strong>「指示を渡して、別の仕事をしている間にClaudeに自律的に進めてもらう」</strong>形式。終わったらPCやスマホに通知が届きます。デスクトップアプリの目玉機能で、2026年4月にGA（一般提供）化されました。Pro/Maxプラン以上で利用可能。</p>
+      <div class="term-scene">時間のかかる調査・下書き・大量データ処理など、「今すぐ返事はいらないけど、終わったら知りたい」作業を任せる用途で威力を発揮します。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 3 ========== -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-title-block">
+        <h2>Claude Codeの主要機能と操作</h2>
+        <p class="chapter-desc">Claude Codeを使いこなすうえで、出会う頻度が特に高い機能と操作の言葉。</p>
+        <span class="chapter-count">10 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📋</div><div class="term-name-block"><div class="term-name">CLAUDE.md</div><div class="term-en">CLAUDE.md</div></div></div>
+      <div class="term-hitokoto"><p>Claude Codeへの「取扱説明書」。プロジェクトのルールを書いておく特別なファイル。</p></div>
+      <p class="term-detail">プロジェクトのルートフォルダに <code>CLAUDE.md</code> という名前で置くと、<strong>Claude Codeが毎回最初に読んで、その指示を守ってくれます</strong>。「日本語で回答」「テストを必ず実行」「特定のコーディング規約に従う」など、繰り返し伝えたい指示はここに集約。<code>/init</code> コマンドで雛形が自動生成されます。</p>
+      <div class="term-scene">「毎回同じ前提を伝えるのが面倒」「チーム全員に同じやり方をさせたい」というとき、CLAUDE.md があれば一発解決。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⚡</div><div class="term-name-block"><div class="term-name">スラッシュコマンド</div><div class="term-en">Slash Command</div></div></div>
+      <div class="term-hitokoto"><p>「/」で始まる、Claude Code操作用のショートカット命令。</p></div>
+      <p class="term-detail">チャット欄に <code>/help</code>、<code>/model</code>、<code>/compact</code> などと打つと、Claude Codeの設定変更や特殊操作ができます。<strong>SlackやNotionで使われるスラッシュコマンドと同じ発想</strong>。困ったら <code>/help</code> と打てば使えるコマンド一覧が出てきます。</p>
+      <div class="term-scene">毎回マウスで設定画面を開かなくても、サッと操作したいとき。慣れるとキーボードだけで快適に作業できます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔒</div><div class="term-name-block"><div class="term-name">パーミッション（権限）</div><div class="term-en">Permission</div></div></div>
+      <div class="term-hitokoto"><p>Claude Codeに「何をしていいか」を決める、安全装置としての許可設定。</p></div>
+      <p class="term-detail">Claude Codeがファイルを編集したりコマンドを実行したりする前に、「これやっていいですか？」と<strong>確認を求めてくる</strong>仕組み。許可（Allow）か拒否（Deny）を選びます。うっかり大事なファイルを壊さないための保険であり、自由度と安全のバランスを取る要です。</p>
+      <div class="term-scene">慣れてくると毎回の確認が面倒に感じますが、「自動許可」を選ぶ前に必ず内容を理解してから設定を変えましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏖️</div><div class="term-name-block"><div class="term-name">サンドボックス</div><div class="term-en">Sandbox</div></div></div>
+      <div class="term-hitokoto"><p>Claude Codeが安全に動くための「砂場」。決められた範囲内でしか動かない隔離環境。</p></div>
+      <p class="term-detail">子どもが砂場の中だけで自由に遊ぶように、Claude Codeも<strong>決められた範囲の中で動作</strong>します。これがあるおかげで、PCのシステムファイルを書き換えてしまうような事故が起きません。Vol.03で紹介するManaged Agentsのサンドボックスは、この概念をクラウドで本格化したものです。</p>
+      <div class="term-scene">「AIに勝手にPCをいじられるのが怖い」という不安に対する、技術的な答えがこのサンドボックスです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📝</div><div class="term-name-block"><div class="term-name">プランモード</div><div class="term-en">Plan Mode</div></div></div>
+      <div class="term-hitokoto"><p>いきなり実行せず、「まず計画を見せて」とClaudeに依頼するモード。</p></div>
+      <p class="term-detail">Claude Codeが<strong>「こういう手順でやろうと思いますが、いいですか？」と計画を提示</strong>してくれます。内容を見てからGOを出せるので、安心して大きな変更が依頼できます。ヘッダ部分などで切り替え可能。慎重に進めたいときの必須機能です。</p>
+      <div class="term-scene">「大規模な変更を任せたいけど、中身を確認してから進めたい」というとき、プランモードを使うと事故率がぐっと下がります。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💾</div><div class="term-name-block"><div class="term-name">チェックポイント</div><div class="term-en">Checkpoint</div></div></div>
+      <div class="term-hitokoto"><p>作業の途中で自動的に作られる「セーブポイント」。失敗してもここまで戻れる。</p></div>
+      <p class="term-detail">ゲームのセーブと同じで、Claude Codeが作業を進める途中で自動的にチェックポイントが記録されます。<strong>「やっぱり気に入らない」「壊れた」「巻き戻したい」</strong>というとき、ここまでサッと戻れる安心機能です。Git の commit よりもっと細かい単位での「やり直し」が可能。</p>
+      <div class="term-scene">大胆にAIに任せる挑戦的な使い方ができるのは、このチェックポイントがあるからこそ。失敗を恐れずに試せます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔍</div><div class="term-name-block"><div class="term-name">差分ビュー</div><div class="term-en">Diff View</div></div></div>
+      <div class="term-hitokoto"><p>変更前と変更後の違いを「色付き」で見せてくれる表示機能。</p></div>
+      <p class="term-detail">Claude Codeがファイルを変更すると、<strong>赤色で削除された箇所、緑色で追加された箇所</strong>を表示してくれます。これにより「Claudeが具体的に何をしたのか」が一目瞭然。承認する前の確認に欠かせない機能です。</p>
+      <div class="term-scene">変更を確認するとき、ファイル全体を読み直す必要はありません。色がついた行だけ見れば差分が把握できます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🗜️</div><div class="term-name-block"><div class="term-name">コンパクト</div><div class="term-en">/compact</div></div></div>
+      <div class="term-hitokoto"><p>長くなった会話を要約してコンテキストの空きを作る、便利なコマンド。</p></div>
+      <p class="term-detail">会話が長くなりコンテキストウィンドウが一杯に近づくと、Claudeの反応が遅くなったり、古い話を忘れたりします。<code>/compact</code> と打つと、<strong>これまでの会話を要点だけに圧縮</strong>して、新しい話のための空きスペースを確保してくれます。</p>
+      <div class="term-scene">長時間セッションで「最初の指示を忘れてきた」と感じたら、迷わず <code>/compact</code>。リセットせずに続けられます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🤖</div><div class="term-name-block"><div class="term-name">ノンインタラクティブモード</div><div class="term-en">Non-interactive Mode</div></div></div>
+      <div class="term-hitokoto"><p>人間が操作しなくても、Claudeが自動で動く「丸投げ」モード。</p></div>
+      <p class="term-detail">CLIで <code>claude -p "〇〇して"</code> のように使います。対話なしで指示を渡してClaudeに自動処理させるモードで、<strong>定期実行のスクリプトやバッチ処理</strong>に組み込めます。「毎朝7時にレポートを生成してSlackに投稿」のような自動化が可能になります。</p>
+      <div class="term-scene">「毎日決まった作業をAIにやらせたい」という発想が出てきたら、このモードの出番です。cron や Task Scheduler と組み合わせて使います。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧩</div><div class="term-name-block"><div class="term-name">自動メモリ</div><div class="term-en">Auto Memory</div></div></div>
+      <div class="term-hitokoto"><p>Claudeが大事な情報を自分で記録して、次のセッションでも覚えていてくれる機能。</p></div>
+      <p class="term-detail">「私は営業部です」「ファイル名は英語で」など、一度伝えた重要情報を<strong>Claudeが自動的に記録</strong>してくれます。別のセッションを始めても、これらの情報を参照して話を進めてくれるので、毎回自己紹介や前提共有をする必要がありません。設定で記憶内容の確認・編集も可能。</p>
+      <div class="term-scene">「同じことを毎回説明するのが面倒」を解消する機能。使い続けるほど、自分専用のアシスタントに育っていきます。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 4 ========== -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-title-block">
+        <h2>拡張・連携の仕組み</h2>
+        <p class="chapter-desc">Claude Codeを「もっと自分仕様」にしていくための、拡張機能の言葉たち。</p>
+        <span class="chapter-count">8 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔌</div><div class="term-name-block"><div class="term-name">API</div><div class="term-en">Application Programming Interface</div></div></div>
+      <div class="term-hitokoto"><p>ソフトウェア同士が「やりとりする窓口」。AIと外部サービスをつなぐ基本の仕組み。</p></div>
+      <p class="term-detail">レストランで言えば「注文カウンター」のようなもの。アプリ（お客さん）がカウンター（API）に注文を出すと、厨房（サーバー）が料理（データ）を返してくれる。Claude Codeも裏側ではClaude APIを通じてAnthropicのサーバーとやりとりしています。<strong>自社サービスにAIを組み込むときも、APIが基本の入口</strong>になります。</p>
+      <div class="term-scene">「API連携する」と言われたら、ソフト同士を自動でつなぐ仕組みの話だと思えばOK。エンジニアでなくても押さえておきたい基本語。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔗</div><div class="term-name-block"><div class="term-name">MCP</div><div class="term-en">Model Context Protocol</div></div></div>
+      <div class="term-hitokoto"><p>Claude Codeをあらゆる外部ツールにつなげる「共通規格」。AI界のUSB。</p></div>
+      <p class="term-detail">USB規格があるおかげで、どのメーカーの機器も互換性があるように、MCPは<strong>Claudeとあらゆるサービス（Slack、Notion、GitHub、データベース等）を共通ルールで接続</strong>できる仕組みです。Anthropic発祥ですが業界標準化が進んでおり、2026年AI連携の土台になっています。</p>
+      <div class="term-scene">「うちのサービスをClaudeから操作したい」と思ったら、まずMCP対応を検討するのが2026年の標準的なアプローチです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🖧</div><div class="term-name-block"><div class="term-name">MCPサーバー</div><div class="term-en">MCP Server</div></div></div>
+      <div class="term-hitokoto"><p>外部サービスのツールをClaude Codeに「公開する」プログラム。</p></div>
+      <p class="term-detail">「Notion用MCPサーバー」を設定すると、<strong>Claude CodeからNotionのページを直接読み書き</strong>できるようになります。Slack用、GitHub用、Google Drive用、データベース用など、世界中の開発者がさまざまなMCPサーバーを公開中。インストールしていくほど、Claude Codeの「できること」が増えていきます。</p>
+      <div class="term-scene">「MCPサーバーを追加する」＝Claude Codeに新しいツールとの接続口を増やすこと。Claude Codeのカスタマイズの中核です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⚙️</div><div class="term-name-block"><div class="term-name">フック</div><div class="term-en">Hook</div></div></div>
+      <div class="term-hitokoto"><p>「〇〇のときに自動で△△する」という、条件付き自動処理の仕掛け。</p></div>
+      <p class="term-detail">ドアが開いたら電気がつく、のような自動化の仕組み。Claude Codeでは<strong>「ファイル保存時に自動フォーマット」「コマンド実行前に安全チェック」「セッション終了時にログ保存」</strong>といった処理を、特定タイミングで挟めます。2026年時点で18種類以上のフックが用意されています。</p>
+      <div class="term-scene">「毎回手動でやっている確認・整形作業」をなくしたいとき、フックの導入を検討するタイミングです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🥷</div><div class="term-name-block"><div class="term-name">スキル</div><div class="term-en">Skill</div></div></div>
+      <div class="term-hitokoto"><p>定型作業を「型」として登録しておく、Claude Code版の必殺技。</p></div>
+      <p class="term-detail">「議事録を作成する」「コードレビューする」「スライドを生成する」など、<strong>繰り返し使う作業手順をパッケージ化</strong>したもの。<code>.claude/commands/</code> フォルダにmarkdownで書いておくと、スラッシュコマンドとして呼び出せます。自分の仕事に合ったオリジナルスキルを蓄積していけば、Claudeが「自分専用のアシスタント」に育ちます。</p>
+      <div class="term-scene">同じパターンの作業が多い人ほど効果絶大。スキルが10個揃ったあたりで、明らかに作業効率が変わってきます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🎮</div><div class="term-name-block"><div class="term-name">プラグイン</div><div class="term-en">Plugin</div></div></div>
+      <div class="term-hitokoto"><p>スキルやフックなどをまとめた、Claude Code版「拡張パック」。</p></div>
+      <p class="term-detail">スマホにアプリを入れて機能を増やすように、Claude Codeにもプラグインを追加して<strong>用途特化の能力一式</strong>を組み込めます。「Web開発用プラグイン」「データ分析用プラグイン」のように、特定の業務向けに最適化されたスキル群がまとまっています。</p>
+      <div class="term-scene">「〇〇用プラグインを入れる」＝Claude Codeに新しい専門能力を一気に追加するということ。素早く特化型に進化させたいとき便利。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">👥</div><div class="term-name-block"><div class="term-name">サブエージェント</div><div class="term-en">Subagent</div></div></div>
+      <div class="term-hitokoto"><p>メインのClaudeが「分身」を生み出して、並行作業させる仕組み。</p></div>
+      <p class="term-detail">複雑な作業のとき、Claude Codeが<strong>自分の分身（サブエージェント）を作って並列で動かす</strong>ことがあります。「調査担当」「実装担当」「レビュー担当」など、それぞれが独立した作業スペースで動くので、お互いの作業を邪魔しません。Vol.03で詳しく扱うマルチエージェント・オーケストレーションの基礎概念です。</p>
+      <div class="term-scene">画面上で「Agent」と複数の処理が同時に走っているのを見たら、サブエージェントが活躍しているサインです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏢</div><div class="term-name-block"><div class="term-name">エージェントチーム</div><div class="term-en">Agent Team</div></div></div>
+      <div class="term-hitokoto"><p>複数のエージェントが役割分担してチームを組み、協力して動く仕組み。</p></div>
+      <p class="term-detail">サブエージェントの発展形です。それぞれに役割（リサーチ・実装・テスト・レビュー等）を与え、<strong>人間のプロジェクトチームのように協働させる</strong>のがエージェントチーム。1人で全部やるより、専門分業のほうが速くて品質も高い——という、人間の組織論と同じ原理が働きます。</p>
+      <div class="term-scene">大きなプロジェクトを「調査→実装→テスト→ドキュメント化」と一気に進めたいとき、エージェントチームの設計が活きてきます。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 5 ========== -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-title-block">
+        <h2>ファイル操作の基礎知識</h2>
+        <p class="chapter-desc">PCのファイル構造を理解すると、Claude Codeが「何をしているか」が劇的に分かりやすくなります。</p>
+        <span class="chapter-count">7 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">☁️</div><div class="term-name-block"><div class="term-name">ローカル / クラウド</div><div class="term-en">Local / Cloud</div></div></div>
+      <div class="term-hitokoto"><p>ローカル＝あなたのPC内、クラウド＝インターネット上のサーバー。</p></div>
+      <p class="term-detail">「ローカルで動く」とは<strong>自分のPC上でソフトが動く</strong>こと。Claude Codeのデスクトップ版・CLI版はローカル動作です。一方、「クラウド」は<strong>インターネット上のサーバー</strong>で動くこと。Web版のClaude Codeはクラウド動作です。データの保管場所も同様の区別があります。</p>
+      <div class="term-scene">「ローカルのファイルを編集して」＝「自分のPC内のファイルを編集して」という意味。クラウドのファイルを扱うときは認証や同期の話が出てきます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📁</div><div class="term-name-block"><div class="term-name">ディレクトリ / フォルダ</div><div class="term-en">Directory / Folder</div></div></div>
+      <div class="term-hitokoto"><p>ファイルを整理して入れる「箱」。フォルダと同じ意味で、エンジニア界隈ではディレクトリと呼ぶ。</p></div>
+      <p class="term-detail">Windows・Macで普段「フォルダ」と呼ぶものと<strong>完全に同じ</strong>もの。ターミナルやプログラミングの世界では「ディレクトリ」と呼ぶのが慣例です。Claude Codeが「ディレクトリ」と言ったら、「あ、フォルダのことね」と頭の中で読み替えれば大丈夫。</p>
+      <div class="term-scene">「このディレクトリにファイルを作成しました」＝「このフォルダにファイルを作りました」。意味は同じ、呼び方が違うだけです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🗺️</div><div class="term-name-block"><div class="term-name">パス</div><div class="term-en">Path</div></div></div>
+      <div class="term-hitokoto"><p>ファイルやフォルダがPC内のどこにあるかを示す「住所」。</p></div>
+      <p class="term-detail">ファイルが置いてある場所を示す文字列です。Macでは <code>/Users/taro/Documents/report.txt</code> のように、フォルダ名を「/」でつないで表現します。<strong>Windowsでは「\」（バックスラッシュ）</strong>が使われます。Claude Codeとのやりとりで頻出するので、自分のPCの基本パスは把握しておくと便利。</p>
+      <div class="term-scene">Claude Codeが「ファイルのパスを教えて」と聞いてきたら、ファイルの場所（住所）を伝えればOK。エクスプローラーやFinderからコピーできます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏠</div><div class="term-name-block"><div class="term-name">ホームディレクトリ</div><div class="term-en">Home Directory (~)</div></div></div>
+      <div class="term-hitokoto"><p>自分のユーザーフォルダ。「~」（チルダ）は「自分の家」を意味する記号。</p></div>
+      <p class="term-detail"><code>~</code>（チルダ）はホームディレクトリの省略記号。Macなら <code>/Users/あなたの名前/</code>、Windowsなら <code>C:\Users\あなたの名前\</code> のことを指します。<code>~/.claude/</code> と書いてあったら、「自分のホームフォルダの中の .claude フォルダ」という意味。</p>
+      <div class="term-scene">Claude Codeの設定ファイルは <code>~/.claude/</code> に保存されます。「~」を見たら「あ、ホームのことね」と読み替えればOK。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📍</div><div class="term-name-block"><div class="term-name">カレントディレクトリ</div><div class="term-en">Current Directory</div></div></div>
+      <div class="term-hitokoto"><p>今いるフォルダ、つまり「現在地」のこと。</p></div>
+      <p class="term-detail">ターミナルやClaude Codeは常に<strong>どこかのフォルダに「いる」状態</strong>です。その今いる場所がカレントディレクトリ。<code>./</code> は「今いるフォルダ」を指す省略記号で、<code>../</code> は「1つ上のフォルダ」を指します。Claude Codeを起動したフォルダがカレントディレクトリになります。</p>
+      <div class="term-scene">Claude Codeが「カレントディレクトリに作成しました」と言ったら、「今開いているプロジェクトのフォルダにファイルを置いた」ということ。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">👻</div><div class="term-name-block"><div class="term-name">ドットファイル / 隠しファイル</div><div class="term-en">Dotfile</div></div></div>
+      <div class="term-hitokoto"><p>「.」で始まる名前のファイルやフォルダ。通常は非表示。</p></div>
+      <p class="term-detail"><code>.claude/</code> <code>.gitignore</code> のように、名前が「.」（ドット）で始まるファイルは<strong>設定用の特別なファイル</strong>として扱われ、通常のエクスプローラーやFinderでは表示されません。Claude CodeのCLAUDE.mdや各種設定は、この隠しフォルダの中に入っています。</p>
+      <div class="term-scene">「.claudeフォルダが見つからない」と思ったら、エクスプローラー・Finderの「隠しファイルを表示」をオンにしてみましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏷️</div><div class="term-name-block"><div class="term-name">拡張子</div><div class="term-en">File Extension</div></div></div>
+      <div class="term-hitokoto"><p>ファイル名の末尾につく「.md」「.html」などの目印。ファイルの種類を示す。</p></div>
+      <p class="term-detail">ファイルの種類を示すラベルです。<code>.md</code> はMarkdown（文書）、<code>.html</code> はWebページ、<code>.js</code> はJavaScript（プログラム）、<code>.py</code> はPython（プログラム）。<strong>Claude Codeはこの拡張子を見てファイルの中身を判断</strong>し、適切な処理をします。</p>
+      <div class="term-scene">「.mdファイルを作成しました」と言われたら、Markdown形式のテキストファイルが作られたということ。中身は普通の文字なのでメモ帳でも開けます。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 6 ========== -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-header">
+      <div class="chapter-num">06</div>
+      <div class="chapter-title-block">
+        <h2>Gitとバージョン管理の基本</h2>
+        <p class="chapter-desc">Claude Codeを使っていると必ず出会う「Git」。概念だけ押さえておけば、Claude Codeの動きが見えてきます。</p>
+        <span class="chapter-count">10 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📜</div><div class="term-name-block"><div class="term-name">Git（ギット）</div><div class="term-en">Git</div></div></div>
+      <div class="term-hitokoto"><p>ファイルの変更履歴を全部記録・管理してくれるシステム。失敗しても元に戻せる安心装置。</p></div>
+      <p class="term-detail">Wordの「変更履歴の記録」を、もっと強力にしたようなもの。<strong>「いつ・誰が・何を・なぜ変えたか」がすべて記録</strong>されます。間違えても過去の状態にいつでも戻せるので、安心して大胆な変更ができます。世界中の開発者がほぼ全員使っている標準ツール。</p>
+      <div class="term-scene">Gitで管理しているプロジェクトなら、Claude Codeが何を変えたかも履歴として追えるので、より安心して任せられます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏛️</div><div class="term-name-block"><div class="term-name">リポジトリ</div><div class="term-en">Repository</div></div></div>
+      <div class="term-hitokoto"><p>Gitで管理されたプロジェクトの「倉庫」。略して「リポ」とも呼ばれる。</p></div>
+      <p class="term-detail">プロジェクトのファイル一式と、その<strong>変更履歴のすべて</strong>が入った場所です。1つのプロジェクト＝1つのリポジトリ、と考えてOK。GitHubに置けば「リモートリポジトリ」、自分のPC内なら「ローカルリポジトリ」と呼びます。</p>
+      <div class="term-scene">「このリポジトリを開いて」＝「このプロジェクトのフォルダを開いて」と同じ意味。エンジニアと話すときの基本語です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📋</div><div class="term-name-block"><div class="term-name">クローン</div><div class="term-en">Clone</div></div></div>
+      <div class="term-hitokoto"><p>リポジトリをまるごと自分のPCにコピーすること。</p></div>
+      <p class="term-detail">インターネット上（GitHub等）にあるプロジェクトを、自分のPCに<strong>ダウンロードして手元で作業できるようにする</strong>こと。ファイルだけでなく、変更履歴もまるごとコピーされるのがポイント。これにより、オフラインでも作業できますし、過去のどの時点にも戻れます。</p>
+      <div class="term-scene">「まずリポジトリをクローンして」＝「プロジェクトを手元にダウンロードして」ということ。Claude Codeでの作業の最初の一歩。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💾</div><div class="term-name-block"><div class="term-name">コミット</div><div class="term-en">Commit</div></div></div>
+      <div class="term-hitokoto"><p>変更内容を「確定保存」する操作。ゲームのセーブのようなイメージ。</p></div>
+      <p class="term-detail">ゲームの「セーブ」と同じ感覚ですが、Git のコミットでは<strong>変更内容のメモ（コミットメッセージ）も一緒に残す</strong>のが特徴。「ログイン画面のデザインを変更」「バグFix #123」のように、後から見て分かるメモを残すのがコツです。</p>
+      <div class="term-scene">Claude Codeが「コミットしますか？」と聞いてきたら、「ここまでの作業をセーブしますか？」という意味。基本的にこまめにコミットしましょう。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🌿</div><div class="term-name-block"><div class="term-name">ブランチ</div><div class="term-en">Branch</div></div></div>
+      <div class="term-hitokoto"><p>本線から枝分かれした「作業用の別ライン」。本番を壊さず新機能を試せる。</p></div>
+      <p class="term-detail">本番環境（mainブランチ）を直接いじらず、<strong>別の枝（ブランチ）を作って安全に試す</strong>仕組み。完成したら本線に合流させます。木の幹から枝が分かれて、また幹に戻ってくるイメージ。チーム開発ではこの仕組みが必須です。</p>
+      <div class="term-scene">「新しいブランチを切って作業して」＝「本線とは別の場所で安全に作業して」ということ。Claude Codeに大きな変更を任せるときも、ブランチを切るのが定石。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔀</div><div class="term-name-block"><div class="term-name">マージ</div><div class="term-en">Merge</div></div></div>
+      <div class="term-hitokoto"><p>分岐したブランチを本線に「合流」させる操作。</p></div>
+      <p class="term-detail">ブランチで作った新機能が完成したら、本線（mainブランチ）に取り込みます。これがマージ。もし<strong>本線側も変更されていて矛盾（コンフリクト）が起きたら</strong>、どちらを優先するか人間が判断する必要があります。Claude Codeはコンフリクト解消も手伝えます。</p>
+      <div class="term-scene">「マージする」＝「完成した作業を本番に反映する」こと。リリースの最終段階で出てくる言葉です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔄</div><div class="term-name-block"><div class="term-name">プッシュ / プル</div><div class="term-en">Push / Pull</div></div></div>
+      <div class="term-hitokoto"><p>プッシュ＝サーバーにアップロード、プル＝サーバーからダウンロード。</p></div>
+      <p class="term-detail"><strong>プッシュ</strong>は自分のPCの変更をサーバー（GitHub等）に送ること。<strong>プル</strong>はサーバーの最新状態を自分のPCに取り込むこと。チームで作業するとき、この2つで全員の変更を同期します。1人で作業しているときも、バックアップのために定期的にプッシュするのが安心です。</p>
+      <div class="term-scene">「プッシュしておいて」＝「変更をクラウドに上げておいて」。「プルしてから作業して」＝「最新版を取り込んでから始めて」。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🚫</div><div class="term-name-block"><div class="term-name">.gitignore</div><div class="term-en">.gitignore</div></div></div>
+      <div class="term-hitokoto"><p>「Gitで管理しなくていいファイル」を指定するリスト。事故防止の要。</p></div>
+      <p class="term-detail"><strong>パスワード・APIキー・一時ファイル・巨大なログ</strong>など、Gitに記録したくない・公開したくないものをリストアップしておくファイル。ここに書いたファイルは Git が無視してくれます。<code>.env</code> のような秘密情報ファイルを誤ってGitHubに公開する事故を防ぐ、めちゃくちゃ重要な仕掛けです。</p>
+      <div class="term-scene">「パスワードがGitHubに漏れた」という事故は、ほぼ100%このファイルの設定漏れが原因。新規プロジェクトでは必ず最初に整備を。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🐙</div><div class="term-name-block"><div class="term-name">GitHub</div><div class="term-en">GitHub</div></div></div>
+      <div class="term-hitokoto"><p>Gitリポジトリをインターネット上で共有・管理できる、最大手のサービス。</p></div>
+      <p class="term-detail">Gitが「変更履歴管理の仕組み」だとすると、GitHubはそれを<strong>クラウドで共有できる場所</strong>。世界中の開発者が利用する「コードのSNS」のような存在で、企業の開発インフラとしても定番。GitLab、Bitbucketも同系統のサービスです。</p>
+      <div class="term-scene">Claude Codeで作ったコードをチームと共有するときも、自分のPCのバックアップとしても、GitHubは最重要インフラ。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📬</div><div class="term-name-block"><div class="term-name">プルリクエスト（PR）</div><div class="term-en">Pull Request</div></div></div>
+      <div class="term-hitokoto"><p>「この変更を本番に入れていいですか？」と仲間にレビュー依頼を出す仕組み。</p></div>
+      <p class="term-detail">いきなり本番に変更を入れず、まず<strong>「こういう変更をしました。確認してください」と提案する</strong>仕組み。チームメンバーが内容を確認（レビュー）してOKを出してから、初めてマージされます。エンジニアの世界では基本マナーで、Claude Codeもプルリクエスト作成を補助できます。</p>
+      <div class="term-scene">「PR出しておいて」＝「変更内容をレビュー依頼として提出して」という意味。チーム開発の品質を守る重要プロセスです。</div>
+    </article>
+  </section>
+
+  <!-- ========== コマンド早見表 ========== -->
+  <section class="cmd-section" id="cmd">
+    <div class="chapter-header">
+      <div class="chapter-num">+</div>
+      <div class="chapter-title-block">
+        <h2>よく使うコマンド早見表</h2>
+        <p class="chapter-desc">まずはこれだけ覚えればOK。困ったらここに戻ってきてください。</p>
+        <span class="chapter-count">QUICK REFERENCE</span>
+      </div>
+    </div>
+
+    <div class="cmd-table">
+      <div class="cmd-row"><div class="cmd-key">/help</div><div class="cmd-desc">ヘルプを表示。困ったらまずこれ。</div></div>
+      <div class="cmd-row"><div class="cmd-key">/model</div><div class="cmd-desc">使うモデルを切り替える（Opus / Sonnet / Haiku）。</div></div>
+      <div class="cmd-row"><div class="cmd-key">/compact</div><div class="cmd-desc">会話を要約して圧縮。コンテキストの節約に。</div></div>
+      <div class="cmd-row"><div class="cmd-key">/clear</div><div class="cmd-desc">会話をリセット。最初からやり直したいときに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">/plan</div><div class="cmd-desc">プランモードのON/OFF。実行前に計画を確認したいときに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">/init</div><div class="cmd-desc">CLAUDE.md ファイルの雛形を自動作成。プロジェクトの初期設定に。</div></div>
+      <div class="cmd-row"><div class="cmd-key">! コマンド</div><div class="cmd-desc">シェルコマンドを直接実行。「! ls」でファイル一覧表示など。</div></div>
+      <div class="cmd-row"><div class="cmd-key">Esc キー</div><div class="cmd-desc">入力を中止。書きかけをキャンセルしたいときに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">Ctrl + C</div><div class="cmd-desc">実行中の処理を中止。Claudeを止めたいときに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">exit</div><div class="cmd-desc">Claude Codeを終了。セッションを閉じたいときに。</div></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>用語を知ることが、自由度を広げる</h2>
+    <p>この用語集に書かれていることを全部理解してから使い始める必要はまったくありません。</p>
+    <p>「MCPでNotionと連携したい」「APIを使って自動化したい」と思ったとき、自分ですべて調べる必要はありません。<strong>GitHubのリポジトリURLをClaude Codeに渡して、日本語で「これを使えるようにして」と伝えれば</strong>、セットアップまでやってくれます。</p>
+    <p>でも、用語を知っていると<strong>「Claudeが今、何をしているか」が見える</strong>ようになり、より的確な指示が出せるようになります。これがVol.01〜Vol.03の3冊で目指している、AIとの新しい関係性です。</p>
+
+    <div class="closing-steps">
+      <h3>今日の次のステップ</h3>
+      <ol>
+        <li>Claude Codeを開いて、自分の業務のひとつをまるごと任せてみる</li>
+        <li>気に入った機能（CLAUDE.md、スキル、MCP など）を1つだけ試してみる</li>
+        <li>Vol.03（AIエージェントを作るなら知っておきたい用語集）で、次のレベルへ進む</li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-mark">Master Glossary Series</div>
+  <div class="footer-brand">NEWXUS</div>
+  <div class="footer-meta">Vol.02 ／ Claude Code を使うなら知っておきたい用語集 ／ Produced by NEWXUS</div>
+</footer>
+
+</body>
+</html>

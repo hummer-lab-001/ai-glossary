@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AIエージェントを作るなら知っておきたい用語集</title>
+<meta name="description" content="Claude Managed Agentsを中心に、AIエージェント時代の本番運用・設計思想・最新機能を学ぶための用語集。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#555;
+    --ink-mute:#888;
+    --paper:#fafaf7;
+    --line:#e8e4dc;
+    --line-soft:#f0ece4;
+    --accent:#c7654a;
+    --accent-soft:#fce8e1;
+    --accent-deep:#a14a32;
+    --bg-card:#ffffff;
+    --code-bg:#f5f1ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px}
+  body{
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.85;
+    letter-spacing:.02em;
+    -webkit-font-smoothing:antialiased;
+  }
+  header.hero{padding:90px 24px 60px;text-align:center;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,var(--paper) 100%)}
+  .hero-eyebrow{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+  h1.hero-title{font-size:clamp(28px,5.5vw,46px);font-weight:900;line-height:1.4;color:var(--ink);max-width:780px;margin:0 auto 18px;letter-spacing:.04em}
+  .hero-sub{font-size:15px;color:var(--ink-soft);max-width:560px;margin:18px auto 0}
+  .hero-vol{display:inline-block;margin-top:28px;padding:6px 14px;border:1px solid var(--line);border-radius:20px;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.2em;color:var(--ink-mute);background:#fff}
+  .container{max-width:780px;margin:0 auto;padding:0 24px}
+  .intro{padding:60px 0}
+  .intro h2{font-size:22px;font-weight:900;margin-bottom:24px;letter-spacing:.05em}
+  .intro h2::before{content:"📖 "}
+  .intro p{margin-bottom:18px;color:var(--ink-soft);font-size:15px}
+  .intro strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .toc{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:60px}
+  .toc h3{font-size:15px;font-weight:900;margin-bottom:20px;letter-spacing:.1em}
+  .toc h3::before{content:"Contents";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .toc ol{list-style:none;padding:0}
+  .toc ol li{border-bottom:1px dashed var(--line);padding:10px 0}
+  .toc ol li:last-child{border-bottom:0}
+  .toc ol li a{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14px;gap:12px}
+  .toc ol li a:hover{color:var(--accent)}
+  .toc-num{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent);font-size:12px;flex-shrink:0}
+  .toc-count{font-family:"Inter",sans-serif;font-size:11px;color:var(--ink-mute);flex-shrink:0}
+  .toc-name{flex:1;border-bottom:1px dotted var(--line);padding-bottom:2px}
+  section.chapter{padding:60px 0 40px;border-top:1px solid var(--line)}
+  .chapter-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:40px}
+  .chapter-num{font-family:"Inter",serif;font-size:64px;font-weight:900;line-height:1;color:var(--accent-soft);flex-shrink:0;letter-spacing:-.02em}
+  .chapter-title-block{flex:1;padding-top:4px}
+  .chapter-title-block h2{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:.04em;line-height:1.4}
+  .chapter-desc{color:var(--ink-soft);font-size:14px}
+  .chapter-count{display:inline-block;margin-top:10px;font-family:"Inter",sans-serif;font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700}
+  .term{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:28px 30px;margin-bottom:18px;transition:border-color .2s ease}
+  .term:hover{border-color:var(--accent)}
+  .term-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+  .term-icon{font-size:24px;line-height:1.2;flex-shrink:0;width:36px;text-align:center}
+  .term-name-block{flex:1}
+  .term-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:.02em}
+  .term-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);margin-top:2px;letter-spacing:.05em}
+  .status-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:4px;font-family:"Inter",sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;vertical-align:middle}
+  .status-beta{background:#e3f4ea;color:#2e7a52}
+  .status-preview{background:#fce8e1;color:#a14a32}
+  .status-ga{background:#e7f1fb;color:#2c5f86}
+  .term-hitokoto{background:var(--accent-soft);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+  .term-hitokoto::before{content:"ひとことで";display:block;font-size:10px;font-weight:900;color:var(--accent-deep);letter-spacing:.2em;margin-bottom:4px}
+  .term-hitokoto p{font-size:15px;font-weight:700;color:var(--ink);line-height:1.6}
+  .term-detail{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .term-detail strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .term-scene{background:var(--code-bg);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink-soft)}
+  .term-scene::before{content:"場面 ";font-weight:900;color:var(--accent-deep);font-size:11px;letter-spacing:.15em}
+  .cmd-section{padding:60px 0;border-top:1px solid var(--line)}
+  .cmd-table{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cmd-row{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:16px 24px;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .cmd-row:last-child{border-bottom:0}
+  .cmd-key{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent-deep)}
+  .cmd-desc{color:var(--ink-soft)}
+  .closing{padding:70px 0;border-top:1px solid var(--line);text-align:center}
+  .closing h2{font-size:22px;font-weight:900;margin-bottom:20px;letter-spacing:.05em}
+  .closing p{color:var(--ink-soft);font-size:15px;max-width:560px;margin:0 auto 16px}
+  .closing-steps{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-top:32px;text-align:left}
+  .closing-steps h3{font-size:15px;font-weight:900;margin-bottom:16px}
+  .closing-steps h3::before{content:"Next Steps";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .closing-steps ol{padding-left:24px;color:var(--ink-soft);font-size:14px}
+  .closing-steps ol li{margin-bottom:10px;line-height:1.7}
+  footer{padding:50px 24px 60px;text-align:center;border-top:1px solid var(--line);background:#fff}
+  .footer-mark{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--ink-mute);margin-bottom:10px;font-weight:600;text-transform:uppercase}
+  .footer-brand{font-family:"Inter",sans-serif;font-size:18px;font-weight:900;color:var(--ink);letter-spacing:.15em;margin-bottom:8px}
+  .footer-meta{font-size:11px;color:var(--ink-mute);letter-spacing:.05em}
+  @media(max-width:560px){
+    .container{padding:0 18px}
+    header.hero{padding:60px 18px 40px}
+    .chapter-header{gap:16px}
+    .chapter-num{font-size:48px}
+    .chapter-title-block h2{font-size:19px}
+    .term{padding:22px 20px}
+    .term-name{font-size:17px}
+    .cmd-row{grid-template-columns:1fr;gap:4px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">AI Agent Glossary</div>
+  <h1 class="hero-title">AIエージェントを作るなら<br>知っておきたい用語集</h1>
+  <p class="hero-sub">2026年、AI業界の主戦場は「モデル」から「エージェント基盤」へ。最新動向を押さえる言葉たち。</p>
+  <div class="hero-vol">VOL. 03 ／ 応用編</div>
+</header>
+
+<div class="container">
+
+  <section class="intro">
+    <h2>この用語集の使い方</h2>
+    <p>この用語集は、AIを「使う側」から「作る側」へ一歩進みたい人のためのものです。</p>
+    <p>2026年、Anthropicは Code with Claude 2026 で新しいモデルを発表しませんでした。代わりに発表されたのが、Managed Agents、Dreaming、Outcomes、Multi-agent orchestration、Claude Finance、Add-ins という<strong>「エージェントを動かす土台」</strong>たち。これは「AIの主戦場が、モデルそのものから、モデルを使いこなす仕組みに移った」という強いメッセージです。</p>
+    <p>この用語集では、その新しい主戦場の言葉を整理しました。<strong>個人で全部を使う必要はありません</strong>。ただ、ニュースや顧客提案でこれらの言葉が出てきたとき、「あ、あれね」と思えるだけで、相手から見る景色がまったく変わります。</p>
+    <p>難しく感じるかもしれませんが、Vol.01の基礎、Vol.02のClaude Code活用ができていれば、その延長線上にある世界です。一気に読まず、関心のあるところから少しずつどうぞ。</p>
+  </section>
+
+  <div class="toc">
+    <h3>もくじ</h3>
+    <ol>
+      <li><a href="#ch1"><span class="toc-num">01</span><span class="toc-name">AIエージェント時代の基本概念</span><span class="toc-count">8語</span></a></li>
+      <li><a href="#ch2"><span class="toc-num">02</span><span class="toc-name">Claude Managed Agents 全体像</span><span class="toc-count">7語</span></a></li>
+      <li><a href="#ch3"><span class="toc-num">03</span><span class="toc-name">2026年新機能：自己改善する3つの仕組み</span><span class="toc-count">8語</span></a></li>
+      <li><a href="#ch4"><span class="toc-num">04</span><span class="toc-name">マルチエージェント設計の考え方</span><span class="toc-count">7語</span></a></li>
+      <li><a href="#ch5"><span class="toc-num">05</span><span class="toc-name">本番運用に必要な仕組み</span><span class="toc-count">7語</span></a></li>
+      <li><a href="#ch6"><span class="toc-num">06</span><span class="toc-name">業界別エージェント実例（Claude Finance）</span><span class="toc-count">5語</span></a></li>
+      <li><a href="#cmd"><span class="toc-num">+</span><span class="toc-name">機能ステータス早見表</span><span class="toc-count"></span></a></li>
+    </ol>
+  </div>
+
+  <!-- ========== Chapter 1 ========== -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-title-block">
+        <h2>AIエージェント時代の基本概念</h2>
+        <p class="chapter-desc">「AIエージェント」というキーワードを聞いたら、まず押さえておきたい基本のき。</p>
+        <span class="chapter-count">8 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🤖</div><div class="term-name-block"><div class="term-name">AIエージェント</div><div class="term-en">AI Agent</div></div></div>
+      <div class="term-hitokoto"><p>「目的を伝えたら、AIが自分で計画して、自分で動いて、結果を出す」自律型AIのこと。</p></div>
+      <p class="term-detail">これまでのAIが「質問に答える」だけだったのに対し、エージェントは<strong>ファイルを開いたり、ツールを使ったり、判断したり</strong>を自分で連続的にやります。「議事録を要約して関係者に送って」と一言伝えれば、要約・宛先選定・送信まで自走するのが理想型。Claude Code、Cowork、Managed Agentsもすべてエージェントの一種です。</p>
+      <div class="term-scene">「AI活用」の次の段階。クライアントに提案するとき、単なるチャット利用ではなく「AIエージェント導入」と言えるかで、提案の重みが変わります。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔧</div><div class="term-name-block"><div class="term-name">ハーネス</div><div class="term-en">Harness</div></div></div>
+      <div class="term-hitokoto"><p>AIモデルを「実際に仕事ができる状態」にするための、外側の仕組み全体。</p></div>
+      <p class="term-detail">「ハーネス」は元々、馬具や工具の固定具を指す言葉。AIモデル単体は文章を返すだけのエンジンですが、これに<strong>ツール・記憶・権限管理・エラー処理</strong>を装着して、実際に動けるエージェントに仕立てる装置全体をハーネスと呼びます。Claude Code、Cursor、Managed Agentsはすべてハーネス。2026年のAI業界で最も熱い競争領域です。</p>
+      <div class="term-scene">「モデルの性能差」より「ハーネスの完成度」のほうがビジネス成果を左右する時代になりました。提案するときの注目ポイント。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🎼</div><div class="term-name-block"><div class="term-name">オーケストレーション</div><div class="term-en">Orchestration</div></div></div>
+      <div class="term-hitokoto"><p>複数のAIや複数のタスクを「指揮者」が束ねて全体を動かす仕組み。</p></div>
+      <p class="term-detail">オーケストラの指揮者のように、<strong>誰が何をいつやるか</strong>を決めて全体をまとめる役割。AIエージェントの世界では、複数の専門エージェントを協調させて1つの大きな仕事を成し遂げる仕組みのことを指します。後で出てくる「マルチエージェント・オーケストレーション」がその代表例。</p>
+      <div class="term-scene">「複雑な業務をAIに任せたい」ときに必要になる考え方。1つのAIで全部やらせず、専門分担させるのがコツです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🦾</div><div class="term-name-block"><div class="term-name">自律性（オートノミー）</div><div class="term-en">Autonomy</div></div></div>
+      <div class="term-hitokoto"><p>AIがどこまで「自分で判断して動けるか」の度合い。</p></div>
+      <p class="term-detail">「次は何をする？」と毎回人間に聞くAIは自律性が低い。「ゴールだけ伝えれば、あとは全部やる」AIは自律性が高い。<strong>業務に組み込むときは、どこまで任せるかを最初に設計する</strong>のが重要です。重要な意思決定は人間、ルーティンはAI、というバランス感覚が問われます。</p>
+      <div class="term-scene">「AIに丸投げ vs 人間が全部監視」の中間をどこに設定するか。これがAI導入コンサルの腕の見せ所です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🛠️</div><div class="term-name-block"><div class="term-name">ツール使用</div><div class="term-en">Tool Use</div></div></div>
+      <div class="term-hitokoto"><p>AIが必要に応じて「外部のツール」を呼び出して使う能力。</p></div>
+      <p class="term-detail">電卓、検索、データベース、APIなど、AIモデル単体ではできないことを<strong>外部ツールを呼び出して補う</strong>仕組み。例えば「最新ニュースを検索する」「Excelの数式を計算する」「Slackにメッセージを送る」など。エージェント機能のほとんどはこのツール使用の応用です。</p>
+      <div class="term-scene">「AIに何ができるか」は、AIの賢さよりも「どんなツールが使えるか」で決まる時代になっています。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧩</div><div class="term-name-block"><div class="term-name">タスク分解</div><div class="term-en">Task Decomposition</div></div></div>
+      <div class="term-hitokoto"><p>大きな仕事を「小さな手順」に分けて、順番に処理していく能力。</p></div>
+      <p class="term-detail">「決算資料を作って」のような曖昧で大きな指示を、AIが自分で<strong>「①データ収集 ②分析 ③グラフ作成 ④文章化 ⑤レビュー」</strong>のように具体的なステップに分解する能力。優れたエージェントの基本動作です。マルチエージェントの場合は、分解した各タスクを別のエージェントに割り振ります。</p>
+      <div class="term-scene">「AIに丸投げしたけど結果がイマイチ」というとき、人間側で分解を手伝ってあげると劇的に良くなることが多いです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔁</div><div class="term-name-block"><div class="term-name">評価ループ</div><div class="term-en">Evaluation Loop</div></div></div>
+      <div class="term-hitokoto"><p>「やってみる→評価する→改善する」を自動で繰り返す仕組み。</p></div>
+      <p class="term-detail">人間が試行錯誤するように、AIも<strong>結果を自己評価して、ダメなら別アプローチで再挑戦</strong>するループを組み込めます。後で出てくる Outcomes 機能がまさにこれ。一発で正解を出すのではなく、合格ラインを超えるまで何度もやり直すのが、信頼性の高いAIエージェントの作り方です。</p>
+      <div class="term-scene">「AIの出力品質を上げる」ためのテクニックの中で、最もインパクトが大きいのが評価ループの導入です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⛰️</div><div class="term-name-block"><div class="term-name">本番環境（プロダクション）</div><div class="term-en">Production</div></div></div>
+      <div class="term-hitokoto"><p>「実際にお客さまや業務で使われる」リアルな環境のこと。</p></div>
+      <p class="term-detail">「開発環境（テスト用）」と対になる言葉。エージェントを試作するのは簡単でも、<strong>実際の業務で安定稼働させる</strong>のは別次元の難しさがあります。エラー対応、料金管理、データ保護、監査記録など、本番にはたくさんの要件が出てきます。Managed Agentsは、まさにこの本番対応を肩代わりするサービス。</p>
+      <div class="term-scene">「とりあえず試作」と「本番投入」の間には深い谷があります。コンサル提案でも、この違いを明確に分けて話すのがプロです。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 2 ========== -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-title-block">
+        <h2>Claude Managed Agents 全体像</h2>
+        <p class="chapter-desc">2026年4月に発表された、Anthropicの本格AIエージェント基盤。その骨格を理解する言葉。</p>
+        <span class="chapter-count">7 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏗️</div><div class="term-name-block"><div class="term-name">Claude Managed Agents <span class="status-badge status-beta">PUBLIC BETA</span></div><div class="term-en">Claude Managed Agents</div></div></div>
+      <div class="term-hitokoto"><p>「AIエージェント用の家具付きマンション」。本番運用に必要なインフラを丸ごと提供するクラウドサービス。</p></div>
+      <p class="term-detail">2026年4月8日に Anthropic が発表した、<strong>本番環境向けフルマネージドAIエージェント基盤</strong>。これまで自社でゼロから3〜6ヶ月かけて作っていた「サンドボックス・状態管理・認証・エラー復旧・コンテキスト管理」などの足場を、すべて Anthropic 側が用意してくれます。料金は<strong>実行時間1時間あたり0.08ドル（約12円）＋トークン使用料</strong>。待機時間は無料。</p>
+      <div class="term-scene">自社プロダクトにAIエージェントを組み込みたい開発チーム向け。Notion、Rakuten、Asana、Sentry などが初期から採用しています。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📦</div><div class="term-name-block"><div class="term-name">サンドボックス（本番版）</div><div class="term-en">Sandbox</div></div></div>
+      <div class="term-hitokoto"><p>エージェントが安全に作業できる、隔離された「砂場」環境。</p></div>
+      <p class="term-detail">Vol.01のサンドボックスと同じ考え方ですが、Managed Agentsでは<strong>セッションごとに自動で用意</strong>される本格仕様。AIが任意のコードやコマンドを実行しても、本番システムに一切影響しないよう完全に隔離されます。エージェントに自由度の高い作業をさせる際の安全装置。これを自前で作るのが大変だったので、Managed Agentsの最重要価値の1つです。</p>
+      <div class="term-scene">「AIに業務システムを任せたいが、暴走が怖い」という不安に対する技術的回答がこれ。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⏳</div><div class="term-name-block"><div class="term-name">セッション管理</div><div class="term-en">Session Management</div></div></div>
+      <div class="term-hitokoto"><p>エージェントの「1回の仕事」を最初から最後まで管理する仕組み。</p></div>
+      <p class="term-detail">エージェントが何時間にもわたって複雑なタスクをこなすには、<strong>途中の状態を保持し、中断・再開できる</strong>仕組みが必要。「今どこまでやったか」「次は何をすべきか」を保存し、長時間タスクを安定運用するのがセッション管理の役目。Managed Agentsの中核機能です。</p>
+      <div class="term-scene">数時間〜数日かかる大規模分析や、夜間バッチ的な業務をAIに任せたい場合、これが堅牢かどうかが命運を分けます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💾</div><div class="term-name-block"><div class="term-name">状態管理</div><div class="term-en">State Management</div></div></div>
+      <div class="term-hitokoto"><p>エージェントが「今どんな状況にあるか」を常に正確に把握する仕組み。</p></div>
+      <p class="term-detail">「どの変数にどの値が入っているか」「どこまでファイルを処理したか」「どんなエラーに遭ったか」など、エージェントの<strong>瞬間瞬間のスナップショット</strong>を保持する技術。長時間動くエージェントでは、この精度がそのまま信頼性に直結します。</p>
+      <div class="term-scene">エンジニア向け概念ですが、コンサル提案では「状態管理がしっかりしているか」が、安定したAI運用の判断基準になります。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔐</div><div class="term-name-block"><div class="term-name">認証情報の処理</div><div class="term-en">Credential Handling</div></div></div>
+      <div class="term-hitokoto"><p>エージェントが安全にAPIキーやパスワードを扱える仕組み。</p></div>
+      <p class="term-detail">エージェントがSlack・Gmail・社内DBにアクセスするには、各サービスの認証情報が必要。これを<strong>平文で保存せず、暗号化された安全な場所から都度参照する</strong>のが本番運用の鉄則。Managed Agents はこの仕組みを最初から備えています。自前で実装すると事故の温床に。</p>
+      <div class="term-scene">「AIが社内システムにアクセスする」案件で、セキュリティ部門が最も気にするポイントです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔄</div><div class="term-name-block"><div class="term-name">エラー回復</div><div class="term-en">Error Recovery</div></div></div>
+      <div class="term-hitokoto"><p>途中でエラーが起きても、自動でリトライ・代替策・復旧をやる仕組み。</p></div>
+      <p class="term-detail">本番のエージェントは、ネットワーク切断、APIの一時障害、想定外のデータ、レート制限など、<strong>数十種類のトラブルに遭遇</strong>します。それぞれに「再試行する」「別の方法で迂回する」「人間に通知する」と適切に対処する仕組みが必要。Managed Agentsはこの機構を持っています。</p>
+      <div class="term-scene">「AIが途中で止まったまま誰も気づかない」事故を防ぐ重要機能。本格運用には欠かせません。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧬</div><div class="term-name-block"><div class="term-name">コンポーザブルAPI</div><div class="term-en">Composable API</div></div></div>
+      <div class="term-hitokoto"><p>レゴブロックのように「組み合わせて独自のエージェントを作れる」API設計思想。</p></div>
+      <p class="term-detail">Managed Agents の設計思想の核。<strong>小さな部品（プリミティブ）を組み合わせて</strong>、自社の業務に合った独自のエージェントワークフローを構築できます。これにより「全部入りパッケージ」ではなく「必要な機能だけ使う」柔軟性が確保されます。Anthropic が「モデル提供会社」から「エージェント基盤提供会社」に脱皮した象徴。</p>
+      <div class="term-scene">「うちの業務に合わせたカスタムAIを作りたい」企業に向けて、自前開発からManaged Agentsへの移行を提案する根拠になります。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 3 ========== -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-title-block">
+        <h2>2026年新機能：自己改善する3つの仕組み</h2>
+        <p class="chapter-desc">Code with Claude 2026 で発表された、AIエージェントを「自分で賢くなる」存在に変える3機能。</p>
+        <span class="chapter-count">8 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🌙</div><div class="term-name-block"><div class="term-name">Dreaming（ドリーミング）<span class="status-badge status-preview">RESEARCH PREVIEW</span></div><div class="term-en">Dreaming</div></div></div>
+      <div class="term-hitokoto"><p>AIが「夢を見ながら」過去の経験を整理して、自分で賢くなっていく機能。</p></div>
+      <p class="term-detail">人間が寝ている間に記憶を整理するのと同じ発想で、AIが<strong>過去のセッションを定期的に振り返り、繰り返しのミス・うまくいったパターン・チーム共通の好み</strong>などを抽出。整理結果を反映するかは自動・手動を選べる安全設計です。法律業界のHarveyでは導入により<strong>完了率が約6倍に向上</strong>したと報告されています。現時点ではリサーチプレビュー（申請制）。</p>
+      <div class="term-scene">長期運用するエージェントを「使えば使うほど賢くなる」状態にしたい企業向け。今すぐ使うより、ニュースとして押さえておく段階。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🧠</div><div class="term-name-block"><div class="term-name">メモリストア</div><div class="term-en">Memory Store</div></div></div>
+      <div class="term-hitokoto"><p>エージェントが「学んだこと」を保存しておく、専用の記憶倉庫。</p></div>
+      <p class="term-detail">エージェントがセッションを通じて得た知識・気付き・成功パターンを保存する場所。<strong>Dreaming はこのメモリストアを定期的に整理する役割</strong>を担います。「メモリが情報をためる」「Dreamingが整理する」というセットで、自己改善型エージェントの記憶システムが完成します。</p>
+      <div class="term-scene">Vol.01の「メモリ機能」の本番運用版。一般ユーザーには見えない裏側の重要パーツです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🎯</div><div class="term-name-block"><div class="term-name">Outcomes（アウトカムズ）<span class="status-badge status-beta">PUBLIC BETA</span></div><div class="term-en">Outcomes</div></div></div>
+      <div class="term-hitokoto"><p>「合格点が出るまで、AIが自分で書き直す」仕組み。</p></div>
+      <p class="term-detail">①開発者が成功基準（ルーブリック）を定義 → ②エージェントが結果生成 → ③別のAI（grader）が採点 → ④不合格なら②に戻ってリトライ → ⑤合格なら通知。Anthropic社内テストでは、<strong>Wordファイル生成で品質+8.4%、PowerPoint生成で+10.1%</strong>の改善を確認。「採点基準を先に決めて、超えるまでAIが粘る」が公式機能化しました。</p>
+      <div class="term-scene">品質基準が明確なタスク（資料作成、コード生成、データ整形）で、一発で合格点に持っていきたいときに威力を発揮します。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📏</div><div class="term-name-block"><div class="term-name">ルーブリック</div><div class="term-en">Rubric</div></div></div>
+      <div class="term-hitokoto"><p>AIに「これが合格点」と先に教える、明文化された採点基準表。</p></div>
+      <p class="term-detail">もともと教育の世界で使われる言葉。Outcomes 機能では<strong>「項目ごとに何を満たせば合格か」を箇条書きで定義</strong>します。例：「①関数の長さは50行以下 ②型エラーゼロ ③テストが全通過 ④コメント率10%以上」など、計測可能な複数項目で。曖昧な「いい感じに」を排除するのがコツ。</p>
+      <div class="term-scene">AI出力の品質を「気合と目視」でなく、再現性ある基準で管理したいとき。コンサル・教育・士業の品質管理思考と相性◎。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">👨‍⚖️</div><div class="term-name-block"><div class="term-name">grader（採点AI）</div><div class="term-en">Grader</div></div></div>
+      <div class="term-hitokoto"><p>本体のAIとは別に動く、出力の品質を採点する専任AI。</p></div>
+      <p class="term-detail">Outcomes機能の中核。<strong>「作る側のAI」と「評価する側のAI」を分ける</strong>のがポイントです。同じAIが自己評価すると甘くなりがちなので、別コンテキストで動く独立した採点AIが冷静に評価します。不合格項目を具体的に指摘し、本体AIにフィードバックして再挑戦させます。</p>
+      <div class="term-scene">「AIの自己採点」の限界を超える設計。複数AIによる相互チェックの最も実用的な例の1つです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔔</div><div class="term-name-block"><div class="term-name">Webhook（ウェブフック）</div><div class="term-en">Webhook</div></div></div>
+      <div class="term-hitokoto"><p>「タスクが終わったよ！」と、AIが外部システムに自動通知する仕組み。</p></div>
+      <p class="term-detail">Outcomes で合格判定が出た、長時間タスクが完了した、エラーで止まった——こうしたイベントを、<strong>あらかじめ登録したURLにHTTPで通知</strong>する仕組み。SlackやLINE、自社の業務システム、メールに自動連動できます。「AIに任せて、終わったらスマホで気づく」運用の要。</p>
+      <div class="term-scene">AIに長時間タスクを任せた後の「結果を見に行く手間」がゼロに。プッシュ型の業務通知設計が可能になります。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">👑</div><div class="term-name-block"><div class="term-name">Multi-agent Orchestration <span class="status-badge status-beta">PUBLIC BETA</span></div><div class="term-en">Multi-agent Orchestration</div></div></div>
+      <div class="term-hitokoto"><p>1人の司令塔AIが、複数の専門AIにタスクを分配して並列で働かせる仕組み。</p></div>
+      <p class="term-detail">複雑なタスクを<strong>リードエージェント（司令塔）が分解し、専門エージェントに並列委任</strong>します。サブエージェントは共有ファイルシステムで連携し、結果をリードに集約。Netflixではプラットフォームチームで本番運用中。Spiral by Every は「リードはHaiku、サブはOpus」という賢いモデル使い分けで、コストと品質を両立させています。</p>
+      <div class="term-scene">「1つのAIでは時間がかかる」複雑タスクを、AIチームに分業させて高速化したい場面で威力を発揮します。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📁</div><div class="term-name-block"><div class="term-name">共有ファイルシステム</div><div class="term-en">Shared Filesystem</div></div></div>
+      <div class="term-hitokoto"><p>複数のエージェントが「同じ作業スペース」でファイルを共有する仕組み。</p></div>
+      <p class="term-detail">マルチエージェントが連携する際の<strong>共通の作業机</strong>。サブエージェントAが作ったファイルをBが読んで、Cが完成させる、といった連続作業を可能にします。各エージェントは独立した文脈で動きながら、成果物は共有されるという絶妙な設計です。</p>
+      <div class="term-scene">「AIチームでの協働開発」を可能にする土台技術。人間のチーム作業の共有フォルダと同じ役割です。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 4 ========== -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-title-block">
+        <h2>マルチエージェント設計の考え方</h2>
+        <p class="chapter-desc">複数AIを協調させるための設計用語。「組織図を描くようにAIをデザインする」時代に必須。</p>
+        <span class="chapter-count">7 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🎖️</div><div class="term-name-block"><div class="term-name">リードエージェント</div><div class="term-en">Lead Agent</div></div></div>
+      <div class="term-hitokoto"><p>マルチエージェント構成での「司令塔・指揮官」役のAI。</p></div>
+      <p class="term-detail">タスク全体を受け取り、<strong>分解・分配・進捗確認・結果統合</strong>を担当する役割。人間の組織で言えばプロジェクトマネージャーやチームリーダー。Spiral by Everyの例では、リードを高速なHaiku、専門作業を高性能なOpusに割り振ることで、コストと品質の最適化を実現しています。</p>
+      <div class="term-scene">エージェントチームを設計するとき、最初に「リードに誰（どのモデル）を据えるか」を決めるのが基本です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">👥</div><div class="term-name-block"><div class="term-name">サブエージェント</div><div class="term-en">Subagent</div></div></div>
+      <div class="term-hitokoto"><p>特定の専門タスクに特化した、リードの下で動く実行部隊AI。</p></div>
+      <p class="term-detail">「調査担当」「コード作成担当」「レビュー担当」など、それぞれが<strong>独自のモデル・プロンプト・ツール</strong>を持ちます。会話履歴・設定・ツール権限がそれぞれ分離されているため、お互いの文脈で混乱しません。並列で同時に動けるのが強みです。</p>
+      <div class="term-scene">「人間の専門家チーム」と同じ感覚で、AI部隊を設計するのが2026年スタイル。役割分担の妙が成果を分けます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔀</div><div class="term-name-block"><div class="term-name">並列タスク実行</div><div class="term-en">Parallel Task Execution</div></div></div>
+      <div class="term-hitokoto"><p>複数のタスクを「順番に」ではなく「同時に」処理すること。</p></div>
+      <p class="term-detail">人間が1つずつ順番にこなすしかない作業を、AIエージェントなら<strong>10個同時に走らせる</strong>ことが可能。例えば「100社の決算分析」を10台のサブエージェントで並列処理すれば、所要時間が1/10に。Netflixの障害分析エージェントはこの方式で、何百ものビルドログを並列で精査しています。</p>
+      <div class="term-scene">「AIで何が変わるか」の最大級のインパクト。時間が10倍速くなる業務を見つけるのがコンサル提案の出発点です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🚪</div><div class="term-name-block"><div class="term-name">コンテキスト分離</div><div class="term-en">Context Isolation</div></div></div>
+      <div class="term-hitokoto"><p>各エージェントが別々の「視野」を持って、お互いの文脈を混ぜない設計。</p></div>
+      <p class="term-detail">マルチエージェントの肝は<strong>各エージェントが独立した文脈で考える</strong>こと。同じ文脈を共有すると、Vol.01の「コンテキスト超過」のように情報過多で混乱します。分離することで、各エージェントが自分の専門領域だけに集中できるようになります。</p>
+      <div class="term-scene">「AIが他の作業に引きずられて品質が落ちる」現象を防ぐための基本設計。エージェント設計の最重要原則の1つ。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔑</div><div class="term-name-block"><div class="term-name">ツール権限</div><div class="term-en">Tool Permissions</div></div></div>
+      <div class="term-hitokoto"><p>各エージェントが「使っていい道具」「触っていいデータ」を制限する設定。</p></div>
+      <p class="term-detail">サブエージェントごとに<strong>「君は調査だけ、ファイル削除はNG」「君は読み取り専用」</strong>と権限を絞ります。これにより、万一エージェントが暴走しても被害範囲を限定可能。セキュリティとガバナンスの基本中の基本です。</p>
+      <div class="term-scene">企業導入の判断で、最も厳しく問われる項目。「権限管理がどうなっているか」を最初に確認するのがプロです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📍</div><div class="term-name-block"><div class="term-name">チェックポイント</div><div class="term-en">Checkpointing</div></div></div>
+      <div class="term-hitokoto"><p>長時間タスクの途中で「セーブポイント」を作り、中断・再開できる仕組み。</p></div>
+      <p class="term-detail">数時間〜数日かかる大きな仕事の途中で、定期的にエージェントの状態を保存。万一エラーで止まっても、<strong>最初からやり直さず、保存ポイントから続行</strong>できます。ゲームのセーブと同じ発想。長時間タスクの安定運用に必須の仕組みです。</p>
+      <div class="term-scene">「夜間バッチ」「大量データ処理」「長文ドキュメント生成」など、時間のかかる仕事をAIに任せるすべての場面で重要。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🤝</div><div class="term-name-block"><div class="term-name">エージェント間通信</div><div class="term-en">Agent Communication</div></div></div>
+      <div class="term-hitokoto"><p>エージェント同士が「相談・依頼・報告」をやりとりする仕組み。</p></div>
+      <p class="term-detail">リードがサブに「これやって」と依頼し、サブが「終わったよ」と報告。途中で<strong>「分からないから教えて」「もう少し情報ちょうだい」</strong>とやりとりする。これらの会話を構造化して効率化する仕組みが、Managed Agentsには組み込まれています。</p>
+      <div class="term-scene">人間のチームコミュニケーションをAIに移植する考え方。「報連相」がAIにも必要、という発想です。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 5 ========== -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-title-block">
+        <h2>本番運用に必要な仕組み</h2>
+        <p class="chapter-desc">エージェントを「動くだけ」から「企業で本格運用できる」状態へ。ガバナンス・コスト・SLAの言葉。</p>
+        <span class="chapter-count">7 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🖥️</div><div class="term-name-block"><div class="term-name">Claude Console</div><div class="term-en">Claude Console</div></div></div>
+      <div class="term-hitokoto"><p>エージェントの挙動を「可視化・追跡」する管理者ダッシュボード。</p></div>
+      <p class="term-detail">どのエージェントが、何を、いつ、なぜ実行したかを<strong>すべて可視化・追跡</strong>できる管理画面。マルチエージェントの場合、リードとサブそれぞれの動きを時系列で確認可能。コンプライアンス対応や、エラー発生時のデバッグに必須。API課金・利用量のモニタリングもここから行います。</p>
+      <div class="term-scene">「AI利用をブラックボックスにせず、説明責任を果たす」企業に欠かせないツール。監査対応の中核。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📜</div><div class="term-name-block"><div class="term-name">監査ログ</div><div class="term-en">Audit Log</div></div></div>
+      <div class="term-hitokoto"><p>「いつ・誰が・どのエージェントに・何をさせたか」のすべての記録。</p></div>
+      <p class="term-detail">企業や規制業界での導入には<strong>事細かな記録</strong>が法的に必要。Managed Agentsは設計段階から監査ログを前提に作られており、必要に応じて長期保存・抽出が可能です。金融、医療、法務など、規制が厳しい業界の導入条件になっています。</p>
+      <div class="term-scene">「うちは監査が厳しいからAIは無理」という企業に対して、Managed Agents は1つの回答になります。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">⚖️</div><div class="term-name-block"><div class="term-name">コンプライアンス</div><div class="term-en">Compliance</div></div></div>
+      <div class="term-hitokoto"><p>法令・社内規程・業界ルールを守ってAIを運用すること。</p></div>
+      <p class="term-detail">個人情報保護法、GDPR、業界ガイドライン、社内承認フローなど、企業がAIを本格運用するには<strong>守るべきルールが山ほどあります</strong>。Managed Agentsは、これらの対応がしやすい設計になっています（権限管理、監査ログ、データ保護など）。</p>
+      <div class="term-scene">大企業案件でAI導入を提案するとき、機能の話より先にコンプライアンス対応の話が来ることが多いです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💰</div><div class="term-name-block"><div class="term-name">従量課金</div><div class="term-en">Usage-based Pricing</div></div></div>
+      <div class="term-hitokoto"><p>「使った分だけ払う」料金体系。AIエージェントの世界では主流。</p></div>
+      <p class="term-detail">Managed Agentsは<strong>実行時間1時間あたり0.08ドル、待機時間は無料、Claudeモデルの使用料は別途トークン単位</strong>。固定費なく始められる反面、使用量が読みづらい難点もあります。コスト管理のため、利用上限設定・通知設定が重要です。</p>
+      <div class="term-scene">経営層への提案で「いくらかかるの？」と聞かれたとき、従量課金の見立てを出すのがコンサルの腕の見せ所。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🚦</div><div class="term-name-block"><div class="term-name">レート制限</div><div class="term-en">Rate Limit</div></div></div>
+      <div class="term-hitokoto"><p>「一定時間あたりの呼び出し回数」の上限。本番運用ではコスト管理の要。</p></div>
+      <p class="term-detail">「1分間に100リクエストまで」「1日10,000リクエストまで」など、<strong>使い過ぎを防ぐ上限</strong>。Vol.01でも紹介しましたが、本番運用では「想定外の利用が暴走してコスト爆発」を防ぐ重要な仕組みになります。Anthropicは2026年5月、Pro/Maxユーザーの5時間制限を10時間に倍増しました。</p>
+      <div class="term-scene">「AI導入したら月の請求が10倍になった」という事故を防ぐための保険。設計時に必ず織り込みます。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📊</div><div class="term-name-block"><div class="term-name">SLA（サービス品質保証）</div><div class="term-en">Service Level Agreement</div></div></div>
+      <div class="term-hitokoto"><p>「このサービスは99%以上稼働します」など、提供品質の約束。</p></div>
+      <p class="term-detail">企業がクラウドサービスを採用する判断基準。<strong>稼働率、応答速度、サポート対応時間</strong>などが契約で定められています。Managed Agentsはエンタープライズ契約でSLAが提供され、自前運用では難しい高い信頼性を担保できます。</p>
+      <div class="term-scene">「自社で作る」vs「Managed Agentsを使う」を比較するときの重要評価軸の1つ。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🛡️</div><div class="term-name-block"><div class="term-name">ガバナンス</div><div class="term-en">Governance</div></div></div>
+      <div class="term-hitokoto"><p>組織全体で「AIをどう使うか、何を許可するか」を統制する仕組み。</p></div>
+      <p class="term-detail">「どの部署にどの権限を渡すか」「どんな業務に使ってよいか」「リスクをどう管理するか」という、<strong>会社レベルのAI利用ポリシー</strong>。Managed Agents・Claude Console・監査ログを組み合わせることで、組織的なガバナンスが実現可能になります。</p>
+      <div class="term-scene">経営層やCISO（最高情報セキュリティ責任者）と話すときの最重要キーワード。「ガバナンスを担保できるか」が導入可否を決めます。</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 6 ========== -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-header">
+      <div class="chapter-num">06</div>
+      <div class="chapter-title-block">
+        <h2>業界別エージェント実例（Claude Finance）</h2>
+        <p class="chapter-desc">2026年5月発表の Claude Finance を例に、業界特化エージェントの実態を知る。</p>
+        <span class="chapter-count">5 TERMS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">💼</div><div class="term-name-block"><div class="term-name">Claude Finance <span class="status-badge status-ga">GA</span></div><div class="term-en">Claude Finance</div></div></div>
+      <div class="term-hitokoto"><p>金融業界向けに、すぐ使える10種類のAIエージェントテンプレート集。</p></div>
+      <p class="term-detail">2026年5月5日発表。投資銀行・資産運用・保険業界の典型業務をカバーする、<strong>「skills（業務知識）＋connectors（データアクセス）＋subagents（専門サブAI）」の3点セットで提供される10種類のテンプレート</strong>。Goldman Sachs、Visa、Citi、AIGなど大手金融機関も導入を進めています。</p>
+      <div class="term-scene">業界特化エージェントの先駆け。今後、医療・法務・小売など、他業界版が出てくる流れの第一弾です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📑</div><div class="term-name-block"><div class="term-name">ピッチビルダー</div><div class="term-en">Pitch Builder</div></div></div>
+      <div class="term-hitokoto"><p>投資銀行のM&Aプレゼン資料を自動で作るエージェント。</p></div>
+      <p class="term-detail">Claude Financeの目玉機能の1つ。<strong>類似企業選定、財務分析、評価倍率計算、スライド構成</strong>を自動化します。これまで若手アナリストが徹夜で作っていた業務を、エージェントが下書きまで持っていく形に。最終チェックは人間（Human in the Loop）。</p>
+      <div class="term-scene">「業界特化エージェントの威力」を最も実感できる例。HUMMERさん的にはコンサル提案資料の自動化に応用可能。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🔍</div><div class="term-name-block"><div class="term-name">KYCスクリーナー</div><div class="term-en">KYC Screener</div></div></div>
+      <div class="term-hitokoto"><p>顧客の身元確認・反社チェックを自動化するエージェント。</p></div>
+      <p class="term-detail">KYC（Know Your Customer）は<strong>金融機関の必須業務</strong>。Claude Financeのエージェントは、顧客情報を複数の公開DB・制裁リスト・反社リストと照合し、リスク評価レポートを自動生成。コンプライアンス担当者の負荷を大幅に軽減します。</p>
+      <div class="term-scene">金融以外でも、不動産・人材・特定取引など「与信が必要な業界」全般に応用可能なパターンです。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">📕</div><div class="term-name-block"><div class="term-name">Cookbook（クックブック）</div><div class="term-en">Cookbook</div></div></div>
+      <div class="term-hitokoto"><p>「料理レシピ」のように、エージェントの完全実装例を提供する公式リソース。</p></div>
+      <p class="term-detail">Anthropic公式が提供する、<strong>動くエージェントの参照アーキテクチャ</strong>。Claude Financeの10種類のエージェントも、それぞれcookbookとして公開されており、各社はこれを<strong>コピー→自社ルールに合わせて改変</strong>するスタイルで導入できます。</p>
+      <div class="term-scene">ゼロから設計するより、cookbookを起点にした方が圧倒的に早い。「車輪の再発明をしない」のがAI時代のスピード感です。</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head"><div class="term-icon">🏆</div><div class="term-name-block"><div class="term-name">業界ベンチマーク</div><div class="term-en">Industry Benchmark</div></div></div>
+      <div class="term-hitokoto"><p>業界特化AIの性能を客観的に測る共通の評価基準。</p></div>
+      <p class="term-detail">Claude Finance は Vals AI Finance Agent ベンチマークで<strong>64.37%という業界トップ</strong>の成績を記録（Claude Opus 4.7との組み合わせ時）。<strong>「うちのAIは賢い」と主観で言うのではなく、業界共通の物差しで証明する</strong>のが2026年スタイルです。</p>
+      <div class="term-scene">クライアントへのAI提案で「他社AIと比べてどうなの？」と聞かれたときの根拠になります。</div>
+    </article>
+  </section>
+
+  <!-- ========== 早見表 ========== -->
+  <section class="cmd-section" id="cmd">
+    <div class="chapter-header">
+      <div class="chapter-num">+</div>
+      <div class="chapter-title-block">
+        <h2>機能ステータス早見表</h2>
+        <p class="chapter-desc">2026年5月時点の主要機能の利用可否と料金。これがそのまま提案資料の基礎情報になります。</p>
+        <span class="chapter-count">QUICK REFERENCE</span>
+      </div>
+    </div>
+
+    <div class="cmd-table">
+      <div class="cmd-row"><div class="cmd-key">Managed Agents</div><div class="cmd-desc">パブリックベータ／利用可／$0.08・時間＋トークン使用料</div></div>
+      <div class="cmd-row"><div class="cmd-key">Dreaming</div><div class="cmd-desc">リサーチプレビュー／要申請／一般利用はまだ</div></div>
+      <div class="cmd-row"><div class="cmd-key">Outcomes</div><div class="cmd-desc">パブリックベータ／利用可／Managed Agentsの料金に含む</div></div>
+      <div class="cmd-row"><div class="cmd-key">Multi-agent Orchestration</div><div class="cmd-desc">パブリックベータ／利用可／Managed Agentsの料金に含む</div></div>
+      <div class="cmd-row"><div class="cmd-key">Claude Finance</div><div class="cmd-desc">GA（一般提供）／利用可／テンプレートは無料、利用は従量</div></div>
+      <div class="cmd-row"><div class="cmd-key">Add-ins (M365)</div><div class="cmd-desc">GA／利用可／Pro・Max契約に含む</div></div>
+      <div class="cmd-row"><div class="cmd-key">Claude Cowork</div><div class="cmd-desc">GA／有料プラン全ユーザー利用可</div></div>
+      <div class="cmd-row"><div class="cmd-key">Webhook（イベント通知）</div><div class="cmd-desc">利用可／Managed Agentsの料金に含む</div></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>これは「来年の常識」になる言葉たち</h2>
+    <p>この用語集に書かれた言葉は、2026年5月現在では「先端の話題」です。でも、AI業界の動きの速さを考えると、<strong>来年の今頃には「常識」になっている</strong>可能性が高い言葉ばかりです。</p>
+    <p>すべてを今すぐ実装する必要はありません。ただ、ニュースや顧客との会話でこれらの言葉が出てきたとき、「あ、Vol.03で見たやつだ」と思い出せるだけで、相手から見たあなたの解像度が変わります。</p>
+    <p>Vol.01でAI全般の基礎を、Vol.02でClaude Codeの実践を、そしてVol.03でエージェント基盤の応用を。<strong>この3冊で、AIを使う側から「AIを設計する側」へ</strong>の橋がかかります。</p>
+
+    <div class="closing-steps">
+      <h3>今日の次のステップ</h3>
+      <ol>
+        <li>気になった機能の公式ドキュメント（claude.com/blog や docs.claude.com）を1つだけ覗いてみる</li>
+        <li>クライアント・上司との次の会話で、用語集の言葉を1つ自然に使ってみる</li>
+        <li>「自社（顧客）の業務でマルチエージェント化できるものは？」と1つ考えてみる</li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-mark">Master Glossary Series</div>
+  <div class="footer-brand">NEWXUS</div>
+  <div class="footer-meta">Vol.03 ／ AIエージェントを作るなら知っておきたい用語集 ／ Produced by NEWXUS</div>
+</footer>
+
+</body>
+</html>
