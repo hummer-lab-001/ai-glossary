@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCPがあるツール一覧｜Claude Code完全活用ガイド Vol.05</title>
+<meta name="description" content="MCP（Model Context Protocol）に対応したツールやサービスの例。MCP対応により、AIアシスタントから安全で柔軟な連携が可能になります。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#555;
+    --ink-mute:#888;
+    --paper:#fafaf7;
+    --line:#e8e4dc;
+    --line-soft:#f0ece4;
+    --accent:#c7654a;
+    --accent-soft:#fce8e1;
+    --accent-deep:#a14a32;
+    --bg-card:#ffffff;
+    --code-bg:#f5f1ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px}
+  body{
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.85;
+    letter-spacing:.02em;
+    -webkit-font-smoothing:antialiased;
+  }
+  header.hero{
+    padding:90px 24px 60px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#fff 0%,var(--paper) 100%);
+  }
+  .hero-eyebrow{
+    font-family:"Inter",sans-serif;
+    font-size:11px;
+    letter-spacing:.3em;
+    color:var(--accent);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  h1.hero-title{
+    font-size:clamp(28px,5.5vw,46px);
+    font-weight:900;
+    line-height:1.4;
+    color:var(--ink);
+    max-width:780px;
+    margin:0 auto 18px;
+    letter-spacing:.04em;
+  }
+  .hero-sub{
+    font-size:15px;
+    color:var(--ink-soft);
+    max-width:560px;
+    margin:18px auto 0;
+  }
+  .hero-vol{
+    display:inline-block;
+    margin-top:28px;
+    padding:6px 14px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    font-family:"Inter",sans-serif;
+    font-size:11px;
+    letter-spacing:.2em;
+    color:var(--ink-mute);
+    background:#fff;
+  }
+  .container{
+    max-width:780px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .intro{padding:60px 0}
+  .intro h2{font-size:22px;font-weight:900;margin-bottom:24px;letter-spacing:.05em}
+  .intro p{margin-bottom:18px;color:var(--ink-soft);font-size:15px}
+  .intro strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .toc{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:60px}
+  .toc h3{font-size:15px;font-weight:900;margin-bottom:20px;letter-spacing:.1em}
+  .toc h3::before{content:"Contents";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .toc ol{list-style:none;padding:0}
+  .toc ol li{border-bottom:1px dashed var(--line);padding:10px 0}
+  .toc ol li:last-child{border-bottom:0}
+  .toc ol li a{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14px;gap:12px}
+  .toc ol li a:hover{color:var(--accent)}
+  .toc-num{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent);font-size:12px;flex-shrink:0}
+  .toc-count{font-family:"Inter",sans-serif;font-size:11px;color:var(--ink-mute);flex-shrink:0}
+  .toc-name{flex:1;border-bottom:1px dotted var(--line);padding-bottom:2px}
+  section.chapter{padding:60px 0 40px;border-top:1px solid var(--line)}
+  .chapter-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:40px}
+  .chapter-num{font-family:"Inter",serif;font-size:64px;font-weight:900;line-height:1;color:var(--accent-soft);flex-shrink:0;letter-spacing:-.02em}
+  .chapter-title-block{flex:1;padding-top:4px}
+  .chapter-title-block h2{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:.04em;line-height:1.4}
+  .chapter-desc{color:var(--ink-soft);font-size:14px}
+  .chapter-count{display:inline-block;margin-top:10px;font-family:"Inter",sans-serif;font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700}
+  .term{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:28px 30px;margin-bottom:18px;transition:border-color .2s ease}
+  .term:hover{border-color:var(--accent)}
+  .term-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+  .term-icon{font-size:24px;line-height:1.2;flex-shrink:0;width:36px;text-align:center}
+  .term-name-block{flex:1}
+  .term-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:.02em}
+  .term-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);margin-top:2px;letter-spacing:.05em}
+  .term-hitokoto{background:var(--accent-soft);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+  .term-hitokoto::before{content:"ひとことで";display:block;font-size:10px;font-weight:900;color:var(--accent-deep);letter-spacing:.2em;margin-bottom:4px}
+  .term-hitokoto p{font-size:15px;font-weight:700;color:var(--ink);line-height:1.6}
+  .term-detail{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .term-detail strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .term-scene{background:var(--code-bg);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink-soft)}
+  .term-scene::before{content:"Claudeができる操作 ";font-weight:900;color:var(--accent-deep);font-size:11px;letter-spacing:.15em}
+  .cmd-section{padding:60px 0;border-top:1px solid var(--line)}
+  .cmd-table{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cmd-row{display:grid;grid-template-columns:180px 1fr;gap:24px;padding:16px 24px;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .cmd-row:last-child{border-bottom:0}
+  .cmd-key{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent-deep)}
+  .cmd-desc{color:var(--ink-soft)}
+  .closing{padding:70px 0;border-top:1px solid var(--line);text-align:center}
+  .closing h2{font-size:22px;font-weight:900;margin-bottom:20px;letter-spacing:.05em}
+  .closing p{color:var(--ink-soft);font-size:15px;max-width:560px;margin:0 auto 16px}
+  .closing-steps{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-top:32px;text-align:left}
+  .closing-steps h3{font-size:15px;font-weight:900;margin-bottom:16px}
+  .closing-steps h3::before{content:"Next Steps";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .closing-steps ol{padding-left:24px;color:var(--ink-soft);font-size:14px}
+  .closing-steps ol li{margin-bottom:10px;line-height:1.7}
+  footer{padding:50px 24px 60px;text-align:center;border-top:1px solid var(--line);background:#fff}
+  .footer-mark{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--ink-mute);margin-bottom:10px;font-weight:600;text-transform:uppercase}
+  .footer-brand{font-family:"Inter",sans-serif;font-size:18px;font-weight:900;color:var(--ink);letter-spacing:.15em;margin-bottom:8px}
+  .footer-meta{font-size:11px;color:var(--ink-mute);letter-spacing:.05em}
+  /* シリーズナビ */
+  .series-nav{background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;justify-content:center;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0}
+  .series-nav a{display:inline-block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.15em;font-weight:700;text-transform:uppercase;color:var(--ink-mute);text-decoration:none;padding:13px 16px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+  .series-nav a:hover{color:var(--accent)}
+  .series-nav a.active{color:var(--accent);border-bottom-color:var(--accent)}
+  /* 解説ボックス */
+  .explain-box{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:40px}
+  .explain-box h3{font-size:18px;font-weight:900;margin-bottom:6px;letter-spacing:.04em}
+  .explain-box .explain-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);letter-spacing:.08em;margin-bottom:18px}
+  .explain-box p{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .explain-box p:last-child{margin-bottom:0}
+  .explain-box strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  /* 比較テーブル */
+  .compare-table{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:20px 0}
+  .compare-row{display:grid;grid-template-columns:100px 1fr 1fr;gap:0;border-bottom:1px solid var(--line-soft)}
+  .compare-row:last-child{border-bottom:0}
+  .compare-head{display:grid;grid-template-columns:100px 1fr 1fr;background:var(--accent-soft)}
+  .compare-cell{padding:12px 16px;font-size:13px;border-right:1px solid var(--line-soft)}
+  .compare-cell:last-child{border-right:0}
+  .compare-label{font-family:"Inter",sans-serif;font-weight:700;font-size:11px;color:var(--ink-mute);letter-spacing:.1em}
+  .compare-title{font-family:"Inter",sans-serif;font-weight:700;font-size:13px;color:var(--accent-deep);padding:12px 16px;border-right:1px solid var(--line-soft)}
+  .compare-api{color:var(--ink-soft)}
+  .compare-mcp{color:var(--ink);font-weight:700}
+  /* SVGイラスト */
+  .illust-wrap{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px 16px 14px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .illust-caption{font-size:12px;color:var(--ink-mute);text-align:center;line-height:1.6}
+  @media(max-width:560px){
+    .container{padding:0 18px}
+    header.hero{padding:60px 18px 40px}
+    .chapter-header{gap:16px}
+    .chapter-num{font-size:48px}
+    .chapter-title-block h2{font-size:19px}
+    .term{padding:22px 20px}
+    .term-name{font-size:17px}
+    .cmd-row{grid-template-columns:1fr;gap:4px}
+    .compare-row,.compare-head{grid-template-columns:80px 1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">MCP &amp; Tool Glossary</div>
+  <h1 class="hero-title">MCPがある<br>ツール一覧</h1>
+  <p class="hero-sub">MCP（Model Context Protocol）に対応したツールやサービスの例。AIアシスタントから安全で柔軟な連携が可能になります。</p>
+  <div class="hero-vol">VOL. 05 ／ MCP連携編</div>
+</header>
+
+<nav class="series-nav">
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.01 入門</a>
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.02 実践</a>
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.03 応用</a>
+  <a href="vol04-api-tools.html">← Vol.04 API</a>
+  <a href="vol05-mcp-tools.html" class="active">Vol.05 MCP</a>
+</nav>
+
+<div class="container">
+
+  <section class="intro">
+    <h2>📖 この一覧の使い方</h2>
+    <p>Vol.04でAPIを学んだあなたへの「次のステップ」がこのVol.05です。</p>
+    <p>APIは「プログラムを書いて外部サービスを呼び出す仕組み」でした。MCPはそこから一歩進んで、<strong>「AIエージェントが自律的にツールを選択・操作できる共通規格」</strong>です。コードを書く必要がありません。</p>
+    <p>冒頭で「MCPとは何か」「APIとの違いは何か」をイラストと比較表でスッキリ解説し、その後に代表的な18ツールを6カテゴリに分けて紹介します。各ツールには<strong>「Claude CodeがMCP経由でできる代表的な操作3つ」</strong>を添えており、実際の活用シーンがイメージしやすくなっています。</p>
+    <p>Vol.01でAIの基礎を、Vol.02でClaude Codeの実践を、Vol.03でエージェント応用を、Vol.04でAPIを、そしてこのVol.05でMCPを。<strong>5冊を通じて、AIを「使う側」から「設計する側」へ</strong>の道筋が見えてきます。</p>
+  </section>
+
+  <div class="toc">
+    <h3>もくじ</h3>
+    <ol>
+      <li><a href="#what"><span class="toc-num">00</span><span class="toc-name">MCPとは何か（イラストで解説）</span><span class="toc-count"></span></a></li>
+      <li><a href="#ch1"><span class="toc-num">01</span><span class="toc-name">コミュニケーション</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch2"><span class="toc-num">02</span><span class="toc-name">ドキュメント・ストレージ</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch3"><span class="toc-num">03</span><span class="toc-name">開発・DevOps</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch4"><span class="toc-num">04</span><span class="toc-name">データ・データベース</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch5"><span class="toc-num">05</span><span class="toc-name">マーケティング・CRM・ビジネス</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch6"><span class="toc-num">06</span><span class="toc-name">その他・ユーティリティ</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#cmd"><span class="toc-num">+</span><span class="toc-name">API vs MCP 違い早見表</span><span class="toc-count"></span></a></li>
+    </ol>
+  </div>
+
+  <!-- ========== 00 MCPとは ========== -->
+  <section class="chapter" id="what">
+    <div class="chapter-header">
+      <div class="chapter-num">00</div>
+      <div class="chapter-title-block">
+        <h2>MCPとは何か</h2>
+        <p class="chapter-desc">APIとの違いがわかれば、MCPの価値が一気に理解できます。USBハブで全部わかります。</p>
+        <span class="chapter-count">CONCEPT</span>
+      </div>
+    </div>
+
+    <div class="explain-box">
+      <h3>MCP</h3>
+      <div class="explain-en">Model Context Protocol（モデル・コンテキスト・プロトコル）</div>
+
+      <div class="illust-wrap">
+        <svg width="560" height="150" viewBox="0 0 560 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+          <rect width="560" height="150" rx="8" fill="#fafaf7"/>
+          <!-- Claude Code -->
+          <rect x="14" y="28" width="110" height="94" rx="8" fill="#fce8e1"/>
+          <rect x="28" y="42" width="82" height="46" rx="6" fill="white"/>
+          <rect x="36" y="50" width="66" height="6" rx="3" fill="#c7654a" opacity="0.3"/>
+          <rect x="36" y="60" width="48" height="6" rx="3" fill="#c7654a" opacity="0.18"/>
+          <rect x="36" y="70" width="56" height="4" rx="2" fill="#c7654a" opacity="0.12"/>
+          <text x="69" y="108" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#a14a32">Claude Code</text>
+          <text x="69" y="122" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="9" fill="#c7654a">（AIエージェント）</text>
+          <!-- 矢印 右 -->
+          <path d="M126 75 L192 75" stroke="#c7654a" stroke-width="2"/>
+          <polygon points="192,70 204,75 192,80" fill="#c7654a"/>
+          <!-- MCPハブ -->
+          <rect x="206" y="16" width="148" height="118" rx="8" fill="white" stroke="#c7654a" stroke-width="1.5"/>
+          <rect x="206" y="16" width="148" height="36" rx="8" fill="#c7654a"/>
+          <rect x="206" y="38" width="148" height="14" rx="0" fill="#c7654a"/>
+          <text x="280" y="38" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="white">MCP</text>
+          <rect x="220" y="60" width="120" height="16" rx="4" fill="#fce8e1"/>
+          <text x="280" y="72" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#a14a32">共通規格でつながる</text>
+          <rect x="220" y="82" width="120" height="16" rx="4" fill="#fce8e1"/>
+          <text x="280" y="94" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#a14a32">権限管理も標準化</text>
+          <text x="280" y="124" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#c7654a">USBハブ</text>
+          <!-- 右：3サービス -->
+          <path d="M354 52 L378 36" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="380" y="18" width="82" height="34" rx="6" fill="#f0ece4"/>
+          <text x="421" y="34" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#555">💬 Slack</text>
+          <path d="M354 75 L430 75" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="432" y="59" width="82" height="34" rx="6" fill="#f0ece4"/>
+          <text x="473" y="75" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#555">📝 Notion</text>
+          <path d="M354 98 L378 114" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <rect x="380" y="98" width="82" height="34" rx="6" fill="#f0ece4"/>
+          <text x="421" y="114" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#555">🐙 GitHub</text>
+        </svg>
+        <p class="illust-caption">USBハブのように、MCPという共通規格があればClaude Codeはあらゆるサービスに同じ方法で接続・操作できる</p>
+      </div>
+
+      <p>USBを思い浮かべてください。マウスでも、キーボードでも、USBメモリでも、<strong>USBという共通規格があれば1つのポートに何でもつなげます</strong>。つなぐたびに新しい変換器を作る必要がありません。</p>
+      <p>MCPはまさにこの「AIのためのUSB規格」です。Anthropicが2024年11月に公開したオープン規格で、<strong>Claude Codeがどのサービスに対しても同じ方法で接続・操作できる</strong>ようになります。個別にAPIの仕様を覚えたり、コードを書いたりする必要がなくなります。</p>
+      <p>APIとの最大の違いは<strong>「誰が操作するか」</strong>です。APIは「人間がプログラムを書いて呼び出す」仕組み。MCPは「AIエージェントが自律的にツールを選択・実行する」仕組みです。「Notionのこのページを要約して」と日本語で言えば、Claude CodeがMCP経由でNotionに接続し、自動でページを取得・要約してくれます。</p>
+    </div>
+  </section>
+
+  <!-- ========== Chapter 1: コミュニケーション ========== -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-title-block">
+        <h2>コミュニケーション</h2>
+        <p class="chapter-desc">ビジネスチャット・コミュニティ系のMCPツール。Claude Codeが日本語で指示するだけで、メッセージ投稿・情報収集を自律実行できる。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">💬</div>
+        <div class="term-name-block">
+          <div class="term-name">Slack MCP</div>
+          <div class="term-en">Salesforce, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「#generalに今日の作業サマリーを投稿して」という指示だけで、Claude Codeが自律的にメッセージを送れる。</p></div>
+      <p class="term-detail">ビジネスチャットの代名詞であるSlackがMCPに対応することで、Claude Codeが<strong>チャンネル監視・レポート自動配信・問い合わせ対応を自律的に実行</strong>できるようになる。APIと違い、「どのエンドポイントを呼ぶか」をコードで書く必要がなく、日本語の指示だけでClaudeが判断して動く。claude.aiのConnectorとしてもすでに対応済みで、即座に使い始められる。</p>
+      <div class="term-scene">① 指定チャンネルへのメッセージ投稿（日次レポート・アラートの自動配信）／② メッセージ履歴・スレッドの検索・取得（コンテキスト把握・議事録生成）／③ ユーザー・チャンネル一覧の取得（組織構造の把握・宛先の自動選択）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🎮</div>
+        <div class="term-name-block">
+          <div class="term-name">Discord MCP</div>
+          <div class="term-en">Discord Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>コミュニティ運営の自動化に強力。イベント告知・FAQ自動応答・新メンバーへのウェルカムメッセージをClaude Codeが自律実行。</p></div>
+      <p class="term-detail">ゲーマー発祥のコミュニティプラットフォームがMCPに対応することで、<strong>コミュニティ運営の多くをClaude Codeに委任</strong>できるようになる。七神守護占のRobloxゲームコミュニティの運営自動化にも活用できる可能性がある。ボット設定より自然な形でAIが関与できるのがMCPの利点。</p>
+      <div class="term-scene">① サーバー・チャンネルへのメッセージ投稿（イベント告知・お知らせの自動配信）／② メッセージ履歴の取得・分析（コミュニティ活動状況のサマリー生成）／③ ロール付与・剥奪（特定条件を満たしたメンバーへの自動権限付与）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">👥</div>
+        <div class="term-name-block">
+          <div class="term-name">Microsoft Teams MCP</div>
+          <div class="term-en">Microsoft Corporation</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>大企業・官公庁で使われるTeamsがMCP対応に。Claude Codeが会議録の作成・社内通知・スケジュール調整を自律実行できる。</p></div>
+      <p class="term-detail">Microsoft 365と深く統合されたビジネスコラボレーションツールのMCP対応により、<strong>大企業向けAI活用提案の文脈で特に重要</strong>なMCP。Outlook・SharePointとの連携も含め、社内システム全体をClaude Codeが横断的に操作できる環境が整う。AIコンサルが企業向け導入を提案する際に必ず検討すべきMCP。</p>
+      <div class="term-scene">① チームチャンネルへのメッセージ投稿・メンション通知（社内アラートの自動配信）／② 会議情報・参加者・議題の取得（会議前のアジェンダ自動生成）／③ チームメンバー一覧・在席状況の取得（タスク割り振りの自動化支援）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 2: ドキュメント・ストレージ ========== -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-title-block">
+        <h2>ドキュメント・ストレージ</h2>
+        <p class="chapter-desc">ファイル管理・文書作成系のMCPツール。Claude Codeが「先週の議事録を全部要約して」という指示に自律対応できる。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📂</div>
+        <div class="term-name-block">
+          <div class="term-name">Google Drive MCP</div>
+          <div class="term-en">Google LLC</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「〇〇プロジェクトの資料をすべて読んで要約して」という指示一つで、Claude Codeがドライブを検索・取得・要約まで自律実行。</p></div>
+      <p class="term-detail">Googleクラウドストレージへの自然言語アクセスが実現する。<strong>claude.aiのConnectorとしてすでに対応済み</strong>で、「このフォルダの全ファイルを読んで共通点を教えて」という複数ファイルの横断的な分析も1回の指示で完了する。AIコンサル業務の資料管理・情報収集の効率が飛躍的に向上する。</p>
+      <div class="term-scene">① ファイルの検索・取得（「〇〇プロジェクトの資料を全部見せて」に自律対応）／② 新規ファイルの作成・既存ファイルへの書き込み（議事録・レポートの自動保存）／③ 共有権限の確認・変更（特定ユーザーへのアクセス権付与を自動化）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📦</div>
+        <div class="term-name-block">
+          <div class="term-name">Dropbox MCP</div>
+          <div class="term-en">Dropbox, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>納品物の自動整理・共有リンク発行・フォルダ管理をClaude Codeが自律実行。クライアントへの資料送付フローの完全自動化に最適。</p></div>
+      <p class="term-detail">ファイル同期・共有に特化したDropboxのMCP対応により、<strong>クリエイター・コンサルの納品フローを完全自動化</strong>できる。「今日完成した資料をクライアントフォルダに入れて、共有リンクを発行して、Slackで送って」という複数ステップを1回の指示でClaude Codeが完遂できる。</p>
+      <div class="term-scene">① ファイルのアップロード・取得・フォルダ整理（納品物管理の自動化）／② 共有リンクの発行・有効期限設定（クライアントへの安全な資料送付）／③ フォルダ構成の取得・新規作成（プロジェクト開始時の自動セットアップ）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📝</div>
+        <div class="term-name-block">
+          <div class="term-name">Notion MCP</div>
+          <div class="term-en">Notion Labs, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>Claude CodeとNotionのMCP連携は特に強力。「今日の打ち合わせをNotionの議事録DBに追加して」という指示だけで完了。</p></div>
+      <p class="term-detail">メモ・Wiki・データベース・タスク管理を統合したNotionのMCP対応は、<strong>AIコンサル業務の情報基盤として最も相性が良いMCP</strong>。顧客情報・案件管理・議事録・ナレッジ蓄積のすべてをClaude Codeが自律的に操作できる。HUMMERさんが現在セットアップ中のNotionと組み合わせることで、業務効率が大きく変わる。claude.aiのMCP接続優先度1位。</p>
+      <div class="term-scene">① ページ・データベースの検索・取得・要約（情報収集と整理の完全自動化）／② 新規ページ作成・既存ページへのブロック追加（議事録・レポートの自動記録）／③ データベースへのレコード追加・更新・フィルタ検索（タスク・案件管理の自動化）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 3: 開発・DevOps ========== -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-title-block">
+        <h2>開発・DevOps</h2>
+        <p class="chapter-desc">コード管理・インフラ系のMCPツール。Claude Codeがコード生成からIssue作成・デプロイまで一貫して自律実行できる。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐙</div>
+        <div class="term-name-block">
+          <div class="term-name">GitHub MCP</div>
+          <div class="term-en">GitHub, Inc. (Microsoft)</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>Claude CodeとGitHub MCPの組み合わせは最強。コード生成→コミット→Issue作成→PRレビュー依頼まで、自律的に一連の流れを完遂する。</p></div>
+      <p class="term-detail">世界最大のソースコード管理プラットフォームのMCP対応は、<strong>開発作業の自動化において最も重要なMCPのひとつ</strong>。hummer-lab-001.github.ioへの公開作業も、将来的にはClaude CodeがMCP経由で自動デプロイする環境が整う。AIコンサルのポートフォリオ管理・成果物公開の自動化に直結する。</p>
+      <div class="term-scene">① Issue・Pull Requestの作成・更新・コメント追加（開発フロー管理の完全自動化）／② リポジトリ内ファイルの読み取り・新規コミット（AIが直接コードを生成・反映）／③ リリース・タグの作成・変更履歴の自動生成（リリース作業の完全自動化）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🦊</div>
+        <div class="term-name-block">
+          <div class="term-name">GitLab MCP</div>
+          <div class="term-en">GitLab Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>セキュリティ要件が厳しい大企業・官公庁向けのMCP。CI/CDパイプラインの制御・Issueの管理・コードレビューをClaude Codeが自律実行。</p></div>
+      <p class="term-detail">セルフホスティング可能なDev(Sec)Opsプラットフォームのエンタープライズ向けMCP対応。<strong>金融機関・官公庁への士業コンサルティング提案</strong>において、GitLab MCPの存在が導入判断を後押しする場面が増えてきている。GitHub MCPと並んで、エンタープライズ開発環境のAI化を担う重要MCP。</p>
+      <div class="term-scene">① プロジェクト・Issue・Merge Requestの作成・更新・ステータス管理（開発進捗の自動把握）／② CI/CDパイプラインのトリガー実行・実行状況のリアルタイム監視／③ コミット差分の取得・コードレビューコメントの自動生成・投稿</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐳</div>
+        <div class="term-name-block">
+          <div class="term-name">Docker MCP</div>
+          <div class="term-en">Docker, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>コンテナ仮想化の業界標準がMCP対応に。Claude Codeがコンテナの状態確認・ログ取得・デバッグを自律的に実行できる。</p></div>
+      <p class="term-detail">アプリをコンテナに梱包して「どの環境でも同じ動作を保証する」仮想化ツール。<strong>MCP対応でClaude Codeがインフラ管理・デバッグを自律実行</strong>できるため、エンジニアでないAIコンサルでもコンテナ環境の把握がしやすくなる。Vol.04のAPIリストに含まれていなかったDockerが、MCPで初登場することも示唆的。</p>
+      <div class="term-scene">① コンテナの一覧取得・起動・停止・削除（インフラ管理の自動化）／② コンテナログの取得・エラー分析（障害対応・デバッグの効率化）／③ イメージ・環境変数・ネットワーク情報の確認（構成確認の自動化）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 4: データ・データベース ========== -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-title-block">
+        <h2>データ・データベース</h2>
+        <p class="chapter-desc">DB操作系のMCPツール。「先月の売上上位10件を出して」という自然言語の指示が、SQLに変換されてDBから結果を返してくれる。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐘</div>
+        <div class="term-name-block">
+          <div class="term-name">PostgreSQL MCP</div>
+          <div class="term-en">PostgreSQL Global Dev Group</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「先月の売上上位10商品を出して」と伝えるだけで、Claude CodeがSQLを生成・実行・結果を返してくれる。ノーコードでDB操作が完結。</p></div>
+      <p class="term-detail">世界で最も使われているオープンソースのリレーショナルデータベース。<strong>MCP対応でClaude Codeが自然言語からSQLを生成・実行</strong>できるため、非エンジニアのクライアントでもデータベースの中身を確認・操作できるようになる。「AIでデータ活用を民主化する」提案の最も説得力ある実例となるMCP。</p>
+      <div class="term-scene">① 自然言語→SQL変換・クエリ実行（データ抽出・集計の完全ノーコード化）／② テーブル構造・スキーマ情報の取得（DB設計の把握・ドキュメント自動生成）／③ レコードの挿入・更新・削除（データ操作の自動化・バッチ処理）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐬</div>
+        <div class="term-name-block">
+          <div class="term-name">MySQL MCP</div>
+          <div class="term-en">Oracle Corporation</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>WordPressやECサイトのバックエンドとして世界中で使われているDBがMCP対応に。非エンジニアでもDBの中身を自然言語で操作できる。</p></div>
+      <p class="term-detail">WordPress・ECサイト・CRMのバックエンドとして最も普及しているデータベース。<strong>MCP対応でClaude Codeが日本語の指示からSQLを生成・実行</strong>できるため、AffiliateHub/NEWXUSのようなプラットフォームのデータ管理を非エンジニアのクライアントでも扱えるようになる。SMB向けAI導入提案で即効性の高いMCP。</p>
+      <div class="term-scene">① SELECT/INSERT/UPDATE/DELETE文の自動生成・実行（CRUD操作の自然言語化）／② テーブル一覧・カラム定義の取得（DB構造の把握・ドキュメント作成）／③ 複数テーブルのJOINクエリ生成（複雑な集計・レポートの自動生成）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">❄️</div>
+        <div class="term-name-block">
+          <div class="term-name">Snowflake MCP</div>
+          <div class="term-en">Snowflake Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>大規模データ分析のクラウドDWHがMCP対応に。「先四半期の売上トレンドを分析して」という指示でClaude Codeが自律的に大規模集計を実行。</p></div>
+      <p class="term-detail">クラウドネイティブなデータウェアハウスプラットフォームで、大企業のデータ活用基盤として急速に普及している。<strong>MCP対応でClaude Codeが自然言語から複雑な分析クエリを生成・実行</strong>できるため、データサイエンティストでなくてもSnowflakeの大規模データを活用できるようになる。大企業向けAIコンサル提案で今後急増するMCP。</p>
+      <div class="term-scene">① データウェアハウスへの接続・SQLクエリ実行（大規模分析の自然言語化）／② テーブル・スキーマ情報の取得・操作（データカタログの自動生成）／③ クエリ実行履歴・パフォーマンス情報の取得（最適化・コスト管理）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 5: マーケティング・CRM ========== -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-title-block">
+        <h2>マーケティング・CRM・ビジネス</h2>
+        <p class="chapter-desc">顧客管理・メール配信系のMCPツール。Claude Codeが顧客情報の更新・商談管理・メール配信を自律実行できる。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">☁️</div>
+        <div class="term-name-block">
+          <div class="term-name">Salesforce MCP</div>
+          <div class="term-en">Salesforce, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「今月の商談リストを作って要約して」という指示でSalesforceのデータを取得・整理・レポート化まで自律実行。営業支援AIとして最活用。</p></div>
+      <p class="term-detail">世界シェアNo.1のCRMのMCP対応は、<strong>大企業・士業向けAI導入提案の核心</strong>になりうる。顧客情報・商談・案件を自然言語で操作できることで、営業担当者のCRM入力作業が大幅に削減される。「Salesforce MCPを使ったAI営業支援」は、AIコンサルとして最も単価を取りやすい提案テーマのひとつ。</p>
+      <div class="term-scene">① 取引先・リード・商談の検索・作成・更新（営業データ管理の完全自動化）／② レポートデータの取得・整形（KPIサマリーの自動生成・Slack投稿）／③ 活動記録（通話・メール・商談ログ）の追加（営業日報の自動入力）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🧡</div>
+        <div class="term-name-block">
+          <div class="term-name">HubSpot MCP</div>
+          <div class="term-en">HubSpot, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「問い合わせフォームからの自動対応」「リードの自動スコアリング」をClaude Codeが自律実行。中小企業向けAI営業自動化の入口として最適。</p></div>
+      <p class="term-detail">マーケティング・営業・CS機能を一体化したオールインワンCRMのMCP対応。<strong>中小企業向けAIコンサルの提案において、最も導入しやすいCRM MCPのひとつ</strong>。無料プランでもMCPを試せるため、クライアントへのデモとして見せやすい。問い合わせ対応の自動化・リード育成の自動化に特に効果的。</p>
+      <div class="term-scene">① コンタクトの作成・プロパティ更新・リスト追加（リード管理の完全自動化）／② Deal（商談）の作成・ステージ変更・担当者アサイン（パイプライン管理の自動化）／③ マーケティングメールの作成・スケジュール設定・効果測定データ取得</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐒</div>
+        <div class="term-name-block">
+          <div class="term-name">Mailchimp MCP</div>
+          <div class="term-en">Intuit Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「新規登録者に自動でウェルカムメールを送る」フローを、Claude Codeが自律的に構築・実行できる。メール配信の完全自動化が実現。</p></div>
+      <p class="term-detail">世界最大級のメールマーケティングプラットフォームのMCP対応で、<strong>ニュースレター配信・顧客育成メール・セール告知の完全自動化</strong>が実現する。AffiliateHub/NEWXUSのアフィリエイト基盤でのメール配信戦略とも直接連携できる。Claude Codeに「今週のニュースレターを作って配信して」と頼むだけで完結する。</p>
+      <div class="term-scene">① メーリングリストへの会員追加・削除・タグ付け（セグメント管理の自動化）／② キャンペーンの作成・コンテンツ設定・スケジュール配信（メール配信の完全自動化）／③ 開封率・クリック率・配信数などのレポートデータ取得・分析</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 6: その他・ユーティリティ ========== -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-header">
+      <div class="chapter-num">06</div>
+      <div class="chapter-title-block">
+        <h2>その他・ユーティリティ</h2>
+        <p class="chapter-desc">ナレッジ管理・タスク管理・Web検索系のMCPツール。Claude Codeの「記憶」と「情報収集」を強化する。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🟣</div>
+        <div class="term-name-block">
+          <div class="term-name">Obsidian MCP</div>
+          <div class="term-en">Dynalist Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>ローカルのナレッジベースをClaude Codeが検索・更新できる。「〇〇について書いたメモを見つけて」という指示に自律対応。</p></div>
+      <p class="term-detail">マークダウンでメモを書き、ページ間のリンクで「知識のグラフ」を構築できるローカルファイルベースのナレッジ管理ツール。<strong>研究者・ライター・エンジニアに人気が高く</strong>、MCP対応でClaude Codeが自分のナレッジベースを検索・更新・整理できる。AIコンサルとして専門知識を体系的に蓄積している人ほど効果が大きいMCP。</p>
+      <div class="term-scene">① ノートの全文検索・取得（「〇〇について書いたメモを見つけて」に自律対応）／② 新規ノートの作成・既存ノートへの追記（情報収集結果の自動保存）／③ リンクグラフ情報の取得（関連ノートの自動発見・知識ネットワーク分析）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📐</div>
+        <div class="term-name-block">
+          <div class="term-name">Linear MCP</div>
+          <div class="term-en">Linear Orbit, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>スタートアップに人気のプロジェクト管理ツールがMCP対応に。バグ報告→Issue作成→担当者アサインまでClaude Codeが自律実行。</p></div>
+      <p class="term-detail">シンプルなUIと高速な動作が特徴で、GitHubとの連携が強力なプロジェクト管理ツール。<strong>MCP対応でClaude CodeがIssue管理・スプリント管理・進捗報告を自律的に実行</strong>できるため、エンジニアチームの生産性向上に直結する。スタートアップへのAI活用提案で即効性のあるMCP候補。</p>
+      <div class="term-scene">① Issue（課題）の検索・作成・優先度設定・担当者アサイン（タスク管理の自動化）／② サイクル（スプリント）・プロジェクトの一覧取得・進捗確認／③ Issue更新・コメント追加・ステータス変更（開発進捗の自動レポート）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🔍</div>
+        <div class="term-name-block">
+          <div class="term-name">Brave Search MCP</div>
+          <div class="term-en">Brave Software, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>プライバシーに強いBraveのWeb検索がMCP対応に。「最新のAIニュースを調べてまとめて」という指示にClaude Codeがリアルタイムで対応。</p></div>
+      <p class="term-detail">Google・Bingに依存しない独自インデックスを持つBrave Searchのエンジン。<strong>MCP対応でClaude Codeがリアルタイムの最新情報を自律的に取得</strong>できるため、「最新のAIニュースを調べてまとめて」「競合他社の動向を調査して」という調査業務をClaude Codeに丸ごと任せられる。AIニュース自動配信システムとの組み合わせにも注目。</p>
+      <div class="term-scene">① Web検索の実行・上位結果の取得（最新情報の自律収集・ファクトチェック）／② 検索結果のフィルタリング・要約（特定トピックのリサーチを自動化）／③ ニュース・ブログ記事の収集・整理（情報収集レポートの自動生成）</div>
+    </article>
+  </section>
+
+  <!-- ========== API vs MCP 比較早見表 ========== -->
+  <section class="cmd-section" id="cmd">
+    <div class="chapter-header">
+      <div class="chapter-num">+</div>
+      <div class="chapter-title-block">
+        <h2>API vs MCP 違い早見表</h2>
+        <p class="chapter-desc">Vol.04（API）とVol.05（MCP）の違いをまとめました。クライアントへの説明にも使えます。</p>
+        <span class="chapter-count">QUICK REFERENCE</span>
+      </div>
+    </div>
+
+    <div class="cmd-table">
+      <div class="cmd-row"><div class="cmd-key">操作する主体</div><div class="cmd-desc">API：人間がコードを書いて呼び出す　／　MCP：AIエージェントが自律的に判断・実行する</div></div>
+      <div class="cmd-row"><div class="cmd-key">コードの必要性</div><div class="cmd-desc">API：ある程度の開発知識が必要　／　MCP：自然言語の指示だけでOK（コード不要）</div></div>
+      <div class="cmd-row"><div class="cmd-key">接続方法の標準化</div><div class="cmd-desc">API：サービスごとに異なる仕様を学ぶ必要がある　／　MCP：共通規格なので同じ方法で全サービスに接続</div></div>
+      <div class="cmd-row"><div class="cmd-key">権限・セキュリティ</div><div class="cmd-desc">API：開発者が個別に実装する　／　MCP：権限管理・認証が標準化されており安全</div></div>
+      <div class="cmd-row"><div class="cmd-key">活用シーン</div><div class="cmd-desc">API：自動化スクリプト・バックエンド開発・定型処理　／　MCP：AIエージェントの自律業務・対話型操作</div></div>
+      <div class="cmd-row"><div class="cmd-key">例：Slackへの投稿</div><div class="cmd-desc">API：コードでSlack APIを呼び出すプログラムを書く　／　MCP：「#generalに投稿して」と言うだけで完了</div></div>
+      <div class="cmd-row"><div class="cmd-key">将来性</div><div class="cmd-desc">API：引き続き重要な基盤　／　MCP：AIエージェント時代の標準規格として急速に普及中</div></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>MCPが変えるのは「AIへの頼み方」だけじゃない</h2>
+    <p>APIを知ることで「このツールを自動化できる」とわかりました。MCPを知ることで「AIに任せられる」に変わります。</p>
+    <p>この違いは、自動化の設計者（人間）とAIの関係を根本的に変えます。人間がコードを書いて操作するのではなく、<strong>人間が「何をしてほしいか」を伝えれば、AIが手段を選んで実行する</strong>時代に入っています。</p>
+    <p>Vol.01〜05の5冊を通じて、AIを「使う側」から「設計する側」への道筋が見えてきたはずです。次のステップは、この知識を実際の業務やクライアント提案の場に使うことです。</p>
+
+    <div class="closing-steps">
+      <h3>今日の次のステップ</h3>
+      <ol>
+        <li>claude.aiの設定画面でConnectorを開き、Google Drive・GmailなどすでにMCP対応済みのツールを確認してみる</li>
+        <li>「Claude CodeにMCP経由で〇〇を自動化させる」という提案を、1つのクライアント業務で具体的に考えてみる</li>
+        <li>Vol.01〜05を通じて学んだ言葉を1つ、明日の会話や提案資料に自然に使ってみる</li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-mark">Master Glossary Series</div>
+  <div class="footer-brand">NEWXUS</div>
+  <div class="footer-meta">Vol.05 ／ MCPがあるツール一覧 ／ Produced by NEWXUS</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>APIが存在するツール一覧｜Claude Code完全活用ガイド Vol.04</title>
+<meta name="description" content="さまざまなツールやサービスのAPIを通じて、外部システムやAIからの連携・自動化が可能です。各ツールでできる代表的な操作3つを紹介。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --ink-soft:#555;
+    --ink-mute:#888;
+    --paper:#fafaf7;
+    --line:#e8e4dc;
+    --line-soft:#f0ece4;
+    --accent:#c7654a;
+    --accent-soft:#fce8e1;
+    --accent-deep:#a14a32;
+    --bg-card:#ffffff;
+    --code-bg:#f5f1ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px}
+  body{
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.85;
+    letter-spacing:.02em;
+    -webkit-font-smoothing:antialiased;
+  }
+  header.hero{
+    padding:90px 24px 60px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#fff 0%,var(--paper) 100%);
+  }
+  .hero-eyebrow{
+    font-family:"Inter",sans-serif;
+    font-size:11px;
+    letter-spacing:.3em;
+    color:var(--accent);
+    font-weight:700;
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  h1.hero-title{
+    font-size:clamp(28px,5.5vw,46px);
+    font-weight:900;
+    line-height:1.4;
+    color:var(--ink);
+    max-width:780px;
+    margin:0 auto 18px;
+    letter-spacing:.04em;
+  }
+  .hero-sub{
+    font-size:15px;
+    color:var(--ink-soft);
+    max-width:560px;
+    margin:18px auto 0;
+  }
+  .hero-vol{
+    display:inline-block;
+    margin-top:28px;
+    padding:6px 14px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    font-family:"Inter",sans-serif;
+    font-size:11px;
+    letter-spacing:.2em;
+    color:var(--ink-mute);
+    background:#fff;
+  }
+  .container{
+    max-width:780px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .intro{padding:60px 0}
+  .intro h2{font-size:22px;font-weight:900;margin-bottom:24px;letter-spacing:.05em}
+  .intro p{margin-bottom:18px;color:var(--ink-soft);font-size:15px}
+  .intro strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .toc{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:60px}
+  .toc h3{font-size:15px;font-weight:900;margin-bottom:20px;letter-spacing:.1em}
+  .toc h3::before{content:"Contents";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .toc ol{list-style:none;padding:0}
+  .toc ol li{border-bottom:1px dashed var(--line);padding:10px 0}
+  .toc ol li:last-child{border-bottom:0}
+  .toc ol li a{display:flex;justify-content:space-between;align-items:baseline;color:var(--ink);text-decoration:none;font-size:14px;gap:12px}
+  .toc ol li a:hover{color:var(--accent)}
+  .toc-num{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent);font-size:12px;flex-shrink:0}
+  .toc-count{font-family:"Inter",sans-serif;font-size:11px;color:var(--ink-mute);flex-shrink:0}
+  .toc-name{flex:1;border-bottom:1px dotted var(--line);padding-bottom:2px}
+  section.chapter{padding:60px 0 40px;border-top:1px solid var(--line)}
+  .chapter-header{display:flex;align-items:flex-start;gap:24px;margin-bottom:40px}
+  .chapter-num{font-family:"Inter",serif;font-size:64px;font-weight:900;line-height:1;color:var(--accent-soft);flex-shrink:0;letter-spacing:-.02em}
+  .chapter-title-block{flex:1;padding-top:4px}
+  .chapter-title-block h2{font-size:24px;font-weight:900;margin-bottom:8px;letter-spacing:.04em;line-height:1.4}
+  .chapter-desc{color:var(--ink-soft);font-size:14px}
+  .chapter-count{display:inline-block;margin-top:10px;font-family:"Inter",sans-serif;font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:700}
+  .term{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:28px 30px;margin-bottom:18px;transition:border-color .2s ease}
+  .term:hover{border-color:var(--accent)}
+  .term-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+  .term-icon{font-size:24px;line-height:1.2;flex-shrink:0;width:36px;text-align:center}
+  .term-name-block{flex:1}
+  .term-name{font-size:19px;font-weight:900;color:var(--ink);line-height:1.4;letter-spacing:.02em}
+  .term-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);margin-top:2px;letter-spacing:.05em}
+  .term-hitokoto{background:var(--accent-soft);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+  .term-hitokoto::before{content:"ひとことで";display:block;font-size:10px;font-weight:900;color:var(--accent-deep);letter-spacing:.2em;margin-bottom:4px}
+  .term-hitokoto p{font-size:15px;font-weight:700;color:var(--ink);line-height:1.6}
+  .term-detail{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .term-detail strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  .term-scene{background:var(--code-bg);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:13px;color:var(--ink-soft)}
+  .term-scene::before{content:"できる操作 ";font-weight:900;color:var(--accent-deep);font-size:11px;letter-spacing:.15em}
+  .cmd-section{padding:60px 0;border-top:1px solid var(--line)}
+  .cmd-table{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cmd-row{display:grid;grid-template-columns:180px 1fr;gap:24px;padding:16px 24px;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .cmd-row:last-child{border-bottom:0}
+  .cmd-key{font-family:"Inter",sans-serif;font-weight:700;color:var(--accent-deep)}
+  .cmd-desc{color:var(--ink-soft)}
+  .closing{padding:70px 0;border-top:1px solid var(--line);text-align:center}
+  .closing h2{font-size:22px;font-weight:900;margin-bottom:20px;letter-spacing:.05em}
+  .closing p{color:var(--ink-soft);font-size:15px;max-width:560px;margin:0 auto 16px}
+  .closing-steps{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-top:32px;text-align:left}
+  .closing-steps h3{font-size:15px;font-weight:900;margin-bottom:16px}
+  .closing-steps h3::before{content:"Next Steps";display:block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:6px;font-weight:700}
+  .closing-steps ol{padding-left:24px;color:var(--ink-soft);font-size:14px}
+  .closing-steps ol li{margin-bottom:10px;line-height:1.7}
+  footer{padding:50px 24px 60px;text-align:center;border-top:1px solid var(--line);background:#fff}
+  .footer-mark{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--ink-mute);margin-bottom:10px;font-weight:600;text-transform:uppercase}
+  .footer-brand{font-family:"Inter",sans-serif;font-size:18px;font-weight:900;color:var(--ink);letter-spacing:.15em;margin-bottom:8px}
+  .footer-meta{font-size:11px;color:var(--ink-mute);letter-spacing:.05em}
+  /* シリーズナビ */
+  .series-nav{background:#fff;border-bottom:1px solid var(--line);padding:0 24px;display:flex;justify-content:center;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0}
+  .series-nav a{display:inline-block;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.15em;font-weight:700;text-transform:uppercase;color:var(--ink-mute);text-decoration:none;padding:13px 16px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+  .series-nav a:hover{color:var(--accent)}
+  .series-nav a.active{color:var(--accent);border-bottom-color:var(--accent)}
+  /* 解説ボックス */
+  .explain-box{background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:32px;margin-bottom:40px}
+  .explain-box h3{font-size:18px;font-weight:900;margin-bottom:6px;letter-spacing:.04em}
+  .explain-box .explain-en{font-family:"Inter",sans-serif;font-size:12px;color:var(--ink-mute);letter-spacing:.08em;margin-bottom:18px}
+  .explain-box p{font-size:14px;color:var(--ink-soft);line-height:1.85;margin-bottom:14px}
+  .explain-box p:last-child{margin-bottom:0}
+  .explain-box strong{color:var(--ink);background:linear-gradient(transparent 65%, var(--accent-soft) 65%);padding:0 2px}
+  /* SVGイラスト */
+  .illust-wrap{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:24px 16px 14px;margin:20px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .illust-caption{font-size:12px;color:var(--ink-mute);text-align:center;line-height:1.6}
+  @media(max-width:560px){
+    .container{padding:0 18px}
+    header.hero{padding:60px 18px 40px}
+    .chapter-header{gap:16px}
+    .chapter-num{font-size:48px}
+    .chapter-title-block h2{font-size:19px}
+    .term{padding:22px 20px}
+    .term-name{font-size:17px}
+    .cmd-row{grid-template-columns:1fr;gap:4px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">API &amp; Tool Glossary</div>
+  <h1 class="hero-title">APIが存在する<br>ツール一覧</h1>
+  <p class="hero-sub">さまざまなツールやサービスがAPIを提供しており、外部システムやAIからの連携・自動化が可能です。</p>
+  <div class="hero-vol">VOL. 04 ／ ツール連携編</div>
+</header>
+
+<nav class="series-nav">
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.01 入門</a>
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.02 実践</a>
+  <a href="https://master-yougo-vol01.netlify.app/" target="_blank">Vol.03 応用</a>
+  <a href="vol04-api-tools.html" class="active">Vol.04 API</a>
+  <a href="vol05-mcp-tools.html">Vol.05 MCP →</a>
+</nav>
+
+<div class="container">
+
+  <section class="intro">
+    <h2>📖 この一覧の使い方</h2>
+    <p>この一覧は、<strong>「APIって何？」という疑問を持ったまま使い始めた人のための解説集</strong>です。</p>
+    <p>Claude CodeやZapierを使って業務を自動化しようとすると、「Slack API」「Notion API」「GitHub API」といった言葉が必ず出てきます。でも「APIってそもそも何？」という疑問を持ったまま進めると、エラーが出たときに何も手が打てません。</p>
+    <p>まず冒頭で<strong>「APIとは何か」</strong>をイラスト付きで解説し、その後に代表的な18ツールを6カテゴリに分けて紹介します。各ツールには「AIからできる代表的な操作3つ」を添えているので、実際に使う場面がイメージしやすくなっています。</p>
+    <p>Vol.05では、APIをさらに進化させた<strong>「MCP（Model Context Protocol）」対応ツール</strong>を紹介します。APIとMCPの違いも、読み終わる頃にはスッキリ理解できます。</p>
+  </section>
+
+  <div class="toc">
+    <h3>もくじ</h3>
+    <ol>
+      <li><a href="#what"><span class="toc-num">00</span><span class="toc-name">APIとは何か（イラストで解説）</span><span class="toc-count"></span></a></li>
+      <li><a href="#ch1"><span class="toc-num">01</span><span class="toc-name">コミュニケーション</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch2"><span class="toc-num">02</span><span class="toc-name">ドキュメント・ストレージ</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch3"><span class="toc-num">03</span><span class="toc-name">開発・DevOps</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch4"><span class="toc-num">04</span><span class="toc-name">データ・データベース</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch5"><span class="toc-num">05</span><span class="toc-name">マーケティング・CRM</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#ch6"><span class="toc-num">06</span><span class="toc-name">その他・ユーティリティ</span><span class="toc-count">3ツール</span></a></li>
+      <li><a href="#cmd"><span class="toc-num">+</span><span class="toc-name">API活用パターン早見表</span><span class="toc-count"></span></a></li>
+    </ol>
+  </div>
+
+  <!-- ========== 00 APIとは ========== -->
+  <section class="chapter" id="what">
+    <div class="chapter-header">
+      <div class="chapter-num">00</div>
+      <div class="chapter-title-block">
+        <h2>APIとは何か</h2>
+        <p class="chapter-desc">難しそうに聞こえますが、仕組みはとてもシンプルです。レストランの注文カウンターで全部わかります。</p>
+        <span class="chapter-count">CONCEPT</span>
+      </div>
+    </div>
+
+    <div class="explain-box">
+      <h3>API</h3>
+      <div class="explain-en">Application Programming Interface（アプリケーション・プログラミング・インターフェース）</div>
+
+      <div class="illust-wrap">
+        <svg width="560" height="150" viewBox="0 0 560 150" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+          <rect width="560" height="150" rx="8" fill="#fafaf7"/>
+          <!-- アプリ -->
+          <rect x="14" y="22" width="108" height="106" rx="8" fill="#fce8e1"/>
+          <rect x="28" y="36" width="80" height="52" rx="6" fill="white"/>
+          <rect x="36" y="44" width="64" height="6" rx="3" fill="#c7654a" opacity="0.3"/>
+          <rect x="36" y="54" width="46" height="6" rx="3" fill="#c7654a" opacity="0.18"/>
+          <rect x="36" y="64" width="54" height="6" rx="3" fill="#c7654a" opacity="0.12"/>
+          <text x="68" y="104" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="12" font-weight="700" fill="#a14a32">アプリ</text>
+          <text x="68" y="118" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#c7654a">（お客さん）</text>
+          <!-- 矢印 右 -->
+          <path d="M126 72 L192 72" stroke="#c7654a" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <polygon points="192,67 203,72 192,77" fill="#c7654a"/>
+          <text x="165" y="62" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#a14a32">リクエスト</text>
+          <!-- API -->
+          <rect x="205" y="12" width="150" height="126" rx="8" fill="white" stroke="#c7654a" stroke-width="1.5"/>
+          <rect x="205" y="12" width="150" height="38" rx="8" fill="#c7654a"/>
+          <rect x="205" y="36" width="150" height="14" rx="0" fill="#c7654a"/>
+          <text x="280" y="35" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="700" fill="white">API</text>
+          <rect x="219" y="62" width="122" height="18" rx="4" fill="#fce8e1"/>
+          <text x="280" y="75" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#a14a32">① リクエストを受け取る</text>
+          <rect x="219" y="86" width="122" height="18" rx="4" fill="#fce8e1"/>
+          <text x="280" y="99" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#a14a32">② 処理して結果を返す</text>
+          <text x="280" y="128" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="11" font-weight="700" fill="#c7654a">注文カウンター</text>
+          <!-- 矢印 右 -->
+          <path d="M357 90 L422 90" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <polygon points="422,85 433,90 422,95" fill="#888"/>
+          <text x="390" y="80" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#888">レスポンス</text>
+          <!-- サービス -->
+          <rect x="435" y="22" width="110" height="106" rx="8" fill="#f0ece4"/>
+          <rect x="449" y="36" width="82" height="52" rx="6" fill="white"/>
+          <rect x="457" y="44" width="66" height="8" rx="3" fill="#888" opacity="0.3"/>
+          <rect x="457" y="57" width="66" height="8" rx="3" fill="#888" opacity="0.2"/>
+          <rect x="457" y="70" width="44" height="6" rx="3" fill="#888" opacity="0.12"/>
+          <text x="490" y="104" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="12" font-weight="700" fill="#555">サービス</text>
+          <text x="490" y="118" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="10" fill="#888">（厨房・DB）</text>
+        </svg>
+        <p class="illust-caption">アプリ（お客さん）がAPI（注文カウンター）に注文を出すと、サービス側（厨房）がデータや処理結果を返してくれる</p>
+      </div>
+
+      <p>レストランを想像してください。お客さんは「カルボナーラをください」と注文します。でも厨房に直接入って料理を作ることはできません。<strong>注文カウンターを通して頼む</strong>だけです。</p>
+      <p>APIはまさにこの「注文カウンター」です。アプリ（お客さん）がAPI（カウンター）に「このデータをちょうだい」「この操作をして」と頼むと、サービス側（厨房）が処理して結果を返してくれます。お客さんは<strong>厨房の中身（サーバーの構造・データベースの設計）を知らなくていい</strong>のです。</p>
+      <p>AIとの関係で言えば、Claude CodeはAPIを通じて各サービスと通信します。<strong>APIの仕様（ルール）さえ守れば、AIが自動でデータ取得・操作・送信ができる</strong>ようになります。このページで紹介する18ツールは、すべてAPIを持っているため、Claude Codeや自動化ツールから操作可能です。</p>
+    </div>
+  </section>
+
+  <!-- ========== Chapter 1: コミュニケーション ========== -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">01</div>
+      <div class="chapter-title-block">
+        <h2>コミュニケーション</h2>
+        <p class="chapter-desc">ビジネスチャット・コミュニティ系のツール。通知・レポート配信・メッセージ管理の自動化に特に活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">💬</div>
+        <div class="term-name-block">
+          <div class="term-name">Slack</div>
+          <div class="term-en">Salesforce, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>ビジネスチャットの代名詞。通知・レポート・問い合わせ対応の自動化に最もよく使われるAPIのひとつ。</p></div>
+      <p class="term-detail">チャンネル・DM・スレッドなど多彩なコミュニケーション形式に対応し、世界中の企業で使われているビジネスチャットツール。<strong>APIで業務自動化との相性が非常に高く</strong>、「特定のイベントが起きたらSlackに通知する」「毎朝集計レポートをチャンネルに投稿する」という用途で頻繁に活用される。Webhookを使えばコーディングなしでも外部サービスからメッセージを送れる。</p>
+      <div class="term-scene">① 指定チャンネルへの自動メッセージ送信（障害通知・日次レポートの自動配信）／② 過去メッセージの検索・取得（議事録の自動生成・情報収集の効率化）／③ ユーザー一覧・在席状況の取得（勤怠管理・ワークフロー自動化への活用）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🎮</div>
+        <div class="term-name-block">
+          <div class="term-name">Discord</div>
+          <div class="term-en">Discord Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>ゲーマー発祥のコミュニティプラットフォーム。ボット連携が充実しており、コミュニティ運営の自動化に強い。</p></div>
+      <p class="term-detail">もともとゲーマー向けに開発されたが、現在はビジネス・クリエイター・Web3コミュニティでも広く活用される。<strong>ボット（Bot）連携が豊富</strong>で、自動化の自由度が高いのが特徴。イベント告知・FAQ自動応答・新メンバーへのウェルカムメッセージなど、コミュニティ運営の多くを自動化できる。</p>
+      <div class="term-scene">① サーバー内への自動通知・お知らせ投稿（イベント告知・更新情報の配信）／② チャンネル一覧・メッセージ履歴の取得（コミュニティの活性度分析）／③ ロール付与・剥奪（特定条件を満たしたメンバーへの自動権限管理）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">👥</div>
+        <div class="term-name-block">
+          <div class="term-name">Microsoft Teams</div>
+          <div class="term-en">Microsoft Corporation</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>Microsoft 365と深く統合されたビジネスツール。大企業・官公庁での採用が多く、Graph APIで広範な操作が可能。</p></div>
+      <p class="term-detail">会議・チャット・ファイル共有を一元管理でき、<strong>OutlookやSharePointとも連携できる「Graph API」</strong>が特徴。大企業・官公庁での導入率が高く、社内システム統合の基盤として活用されることが多い。AIコンサルが企業向け提案をする際に、最もよく出てくるコミュニケーション基盤のひとつ。</p>
+      <div class="term-scene">① チャンネルへのメッセージ送信（社内報・アラートの自動配信）／② 会議スケジュールの作成・変更・参加者への通知自動化／③ チームメンバー一覧・組織情報の取得（人事連携・ディレクトリ管理の自動化）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 2: ドキュメント・ストレージ ========== -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">02</div>
+      <div class="chapter-title-block">
+        <h2>ドキュメント・ストレージ</h2>
+        <p class="chapter-desc">ファイル管理・文書作成系のツール。バックアップ自動化・レポート保存・資料配布フローの構築に活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📂</div>
+        <div class="term-name-block">
+          <div class="term-name">Google Drive</div>
+          <div class="term-en">Google LLC</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>Googleのクラウドストレージ。Docs・Sheets・Slidesと連携が強力で、普及率が高いため自動化の出発点になりやすい。</p></div>
+      <p class="term-detail">Docs・Sheets・Slidesとのシームレスな連携が強力で、リアルタイム共同編集が可能。15GBまで無料のため個人・法人問わず普及率が高く、<strong>業務ドキュメントの保存・共有基盤として最も広く使われているクラウドストレージ</strong>。Claudeとの連携（Connector）も標準対応しており、「このフォルダの資料を全部読んで要約して」という作業が自然言語でできる。</p>
+      <div class="term-scene">① 指定フォルダへのファイル自動アップロード・整理（定期バックアップの自動化）／② ファイル名・更新日・共有状況のリスト取得（棚卸し・監査への活用）／③ 共有権限の変更・リンク発行（承認フロー・配布の自動化）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📦</div>
+        <div class="term-name-block">
+          <div class="term-name">Dropbox</div>
+          <div class="term-en">Dropbox, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>ファイル同期・共有に特化したクラウドストレージの先駆け。クリエイターの納品物管理フローに特に活用されやすい。</p></div>
+      <p class="term-detail">デバイス間の自動同期が強力で、クリエイター・デザイナー間の大容量ファイルのやりとりに多用される。<strong>Paperという文書作成機能</strong>も内包しており、単なるストレージを超えたコラボレーション基盤として機能する。クライアントへの納品物管理・資料配布フローの完全自動化に適している。</p>
+      <div class="term-scene">① ファイルのアップロード・ダウンロード（納品物の自動受け渡しフローの構築）／② 共有リンクの発行・有効期限設定（クライアントへの安全・確実な送付）／③ フォルダ構成の取得・新規作成（プロジェクト開始時の自動セットアップ）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📝</div>
+        <div class="term-name-block">
+          <div class="term-name">Notion</div>
+          <div class="term-en">Notion Labs, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>メモ・Wiki・DB・タスクを統合したワークスペース。AIコンサルの情報基盤として、顧客管理・議事録・ナレッジ蓄積に最適。</p></div>
+      <p class="term-detail">メモ・Wiki・データベース・タスク管理を1つに統合したオールインワンワークスペース。スタートアップから大企業まで幅広く導入され、日本語対応も充実。<strong>Claudeとの連携（Connector・MCP両対応）が特に強力</strong>で、「今日の打ち合わせ内容をNotionの議事録データベースに追加して」という指示一つで自動保存できる。HUMMERさんが現在セットアップ中のAIコンサル業務の情報基盤としても最適。</p>
+      <div class="term-scene">① データベースへのレコード追加・更新（顧客情報・案件管理の自動入力）／② ページの新規作成・本文更新（議事録・レポートの自動生成・保存）／③ データベース検索・フィルタリング（特定条件のタスクや情報の一括取得）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 3: 開発・DevOps ========== -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">03</div>
+      <div class="chapter-title-block">
+        <h2>開発・DevOps</h2>
+        <p class="chapter-desc">コード管理・CI/CD系のツール。Issue管理・自動デプロイ・コードレビューの自動化に活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐙</div>
+        <div class="term-name-block">
+          <div class="term-name">GitHub</div>
+          <div class="term-en">GitHub, Inc. (Microsoft)</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>世界最大のソースコード管理プラットフォーム。Claude CodeとGitHub Pages・Actionsを組み合わせると、AIコンサルの公開基盤になる。</p></div>
+      <p class="term-detail">GitリポジトリのホスティングはもちろんCI/CD・Actions・Pages・Copilotまでカバーする開発者必須のハブ。<strong>Claude CodeとGitHub MCPを組み合わせると、コード生成からIssue作成・PRレビュー依頼・リリースノート作成まで自律的に実行</strong>できる。HUMMERさんのAIコンサル成果物公開（hummer-lab-001.github.io）にも直結する重要ツール。</p>
+      <div class="term-scene">① Issue・Pull Requestの自動作成・ステータス更新（開発フロー管理の自動化）／② リポジトリ内ファイルの読み取り・新規コミット（AIが直接コードを反映）／③ リリース・タグの作成・変更履歴の自動生成（リリース作業の完全自動化）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🦊</div>
+        <div class="term-name-block">
+          <div class="term-name">GitLab</div>
+          <div class="term-en">GitLab Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>セルフホスティング可能なDev(Sec)Opsプラットフォーム。セキュリティ要件が厳しい大企業・官公庁への提案で必ず名前が出る。</p></div>
+      <p class="term-detail">GitHubと双璧をなすプラットフォームで、自社サーバーで動かせる（セルフホスティング）ため、<strong>セキュリティ要件が厳しい金融機関・官公庁・大企業に採用</strong>されやすい。CI/CDパイプラインの機能が特に充実しており、開発・テスト・デプロイの自動化に強みを持つ。</p>
+      <div class="term-scene">① プロジェクト・Issue・Merge Requestの一覧取得・作成・更新（開発進捗管理）／② CI/CDパイプラインのトリガー実行・実行状況の監視（ビルド自動化）／③ コミット差分の取得・コードレビューコメントの自動生成</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">⚙️</div>
+        <div class="term-name-block">
+          <div class="term-name">CircleCI</div>
+          <div class="term-en">Circle Internet Services, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>クラウドネイティブなCI/CDサービス。コードをpushするたびに自動でテスト・ビルド・デプロイを実行する「継続的インテグレーション」の代表格。</p></div>
+      <p class="term-detail">設定ファイル1つで複雑なパイプラインを構築でき、テスト自動化・品質管理に強い。<strong>「コードを書いたら自動でテストして、問題なければ本番反映」という流れをAPIで制御</strong>できる。スタートアップ〜中堅企業でのCI/CD基盤として広く採用されている。</p>
+      <div class="term-scene">① パイプラインのトリガー実行（特定ブランチのビルド・テストを任意のタイミングで起動）／② ジョブ・ワークフローの実行状況取得（ビルド成否の監視・Slack通知連携）／③ 環境変数の取得・更新（デプロイ設定の動的変更・シークレット管理）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 4: データ・データベース ========== -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-num">04</div>
+      <div class="chapter-title-block">
+        <h2>データ・データベース</h2>
+        <p class="chapter-desc">データ管理・分析系のツール。集計・レポート生成・データ操作の自動化に活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📊</div>
+        <div class="term-name-block">
+          <div class="term-name">Airtable</div>
+          <div class="term-en">Formagrid, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>スプレッドシートとDBを融合させたノーコードツール。非エンジニアでも本格的なデータ管理ができ、中小企業の業務基盤として人気。</p></div>
+      <p class="term-detail">フォーム・ギャラリー・カンバン・タイムラインなど多彩なビューを持ち、<strong>非エンジニアでも本格的なデータ管理が可能</strong>。顧客管理・在庫管理・業務管理など幅広い用途に対応。SMB（中小企業）向けAI導入提案において、Notionと並んで最もよく登場するデータ基盤。</p>
+      <div class="term-scene">① レコードの一括取得・フィルタリング（条件付き顧客リストや案件一覧の自動抽出）／② 新規レコードの追加・既存レコードの更新（フォーム入力内容の自動登録）／③ テーブル構造の取得（ダイナミックなフォーム・帳票の自動生成）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🍃</div>
+        <div class="term-name-block">
+          <div class="term-name">MongoDB</div>
+          <div class="term-en">MongoDB, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>JSONに近い「ドキュメント型」データベース。スキーマが柔軟なためスタートアップや変化の速いサービスに多用される。</p></div>
+      <p class="term-detail">データをJSONに近い形式で柔軟に保存できるため、<strong>仕様が頻繁に変わるスタートアップのプロダクト開発に多用</strong>される。Atlas Data APIを使えばサーバーレスで外部からDBを直接操作でき、バックエンド開発を大幅に簡略化できる。AIコンサルがSaaSプロダクト開発を支援する際によく出てくるDB選択肢。</p>
+      <div class="term-scene">① コレクション内のドキュメント検索・条件絞り込み（ユーザー情報・ログの取得）／② 新規ドキュメントの挿入・既存データの更新・削除（CRUD操作の自動化）／③ 集計パイプラインの実行（月次売上集計・ユーザー行動分析の自動化）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">📈</div>
+        <div class="term-name-block">
+          <div class="term-name">Google BigQuery</div>
+          <div class="term-en">Google LLC</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>Googleのサーバーレス大規模データウェアハウス。数TB〜PBのデータにSQLを実行でき、マーケ分析・BI連携の基盤として急増中。</p></div>
+      <p class="term-detail">数TB〜PBのデータにSQLを実行でき、処理速度が圧倒的なサーバーレス型のデータウェアハウス。<strong>Google Analytics・Google広告データとの連携が特に強力</strong>で、マーケティング分析のデータ基盤として採用企業が急増している。AIコンサルがデータ活用提案をする際に、避けては通れないプラットフォーム。</p>
+      <div class="term-scene">① SQLクエリの実行・結果取得（大規模データの自動集計・週次レポートの自動生成）／② データセット・テーブルの一覧取得・スキーマ確認（データカタログの自動化）／③ テーブルへのデータ挿入（外部システムからのストリーミングデータ投入）</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 5: マーケティング・CRM ========== -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-num">05</div>
+      <div class="chapter-title-block">
+        <h2>マーケティング・CRM</h2>
+        <p class="chapter-desc">顧客管理・メール配信系のツール。リード管理・商談追跡・メールマーケティングの自動化に活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🧡</div>
+        <div class="term-name-block">
+          <div class="term-name">HubSpot</div>
+          <div class="term-en">HubSpot, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>マーケ・営業・CSを一体化したオールインワンCRM。中小企業から大企業まで世界20万社以上が採用しており、日本でも急速に普及中。</p></div>
+      <p class="term-detail">メール配信・LP作成・パイプライン管理・カスタマーサポートまでカバーする統合型CRM。<strong>無料プランが充実しており、スタートアップが最初に導入するCRMとしても人気</strong>。AIコンサルが中小企業へのCRM導入を提案する際に、最も推奨しやすい選択肢のひとつ。</p>
+      <div class="term-scene">① コンタクト（顧客）の新規登録・プロパティ更新（フォーム→CRM自動連携）／② Deal（商談）の作成・ステージ変更（営業パイプライン進捗の自動管理）／③ マーケティングメールの送信・開封率・クリック率などの効果測定データ取得</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">☁️</div>
+        <div class="term-name-block">
+          <div class="term-name">Salesforce</div>
+          <div class="term-en">Salesforce, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>世界シェアNo.1のCRMプラットフォーム。大企業・士業・コンサル業界での採用率が高く、顧客管理基盤の定番。</p></div>
+      <p class="term-detail">リード管理・商談・契約・サポートまで営業プロセス全体をカバー。<strong>大企業での採用率が高く、士業・コンサル業界でも顧客管理基盤として普及</strong>しており、AIコンサルの対企業向け提案で必ず名前が出るプラットフォーム。豊富なカスタマイズ性と豊富なAPIが特徴。</p>
+      <div class="term-scene">① 取引先・リード・商談のSOQL検索・作成・更新（営業データ管理の自動化）／② レポートデータの取得（KPIダッシュボードへの自動データ反映）／③ Apexトリガー・フロー連携による承認フロー・通知プロセスの自動化</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🐒</div>
+        <div class="term-name-block">
+          <div class="term-name">Mailchimp</div>
+          <div class="term-en">Intuit Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>世界最大級のメールマーケティングプラットフォーム。無料プランが充実しており、スタートアップ・個人事業主にも人気が高い。</p></div>
+      <p class="term-detail">キャンペーン作成から配信・効果測定まで一貫管理できるメールマーケティングの定番ツール。<strong>ニュースレター・セール告知・顧客育成メールに幅広く活用</strong>され、AffiliateHub/NEWXUSのようなアフィリエイト基盤との組み合わせでも効果を発揮する。</p>
+      <div class="term-scene">① メーリングリストへの会員追加・削除・タグ付け（セグメント管理の完全自動化）／② キャンペーンの作成・スケジュール設定・送信（メール配信フローの自動化）／③ 開封率・クリック率・購読解除数などの詳細レポートデータ取得</div>
+    </article>
+  </section>
+
+  <!-- ========== Chapter 6: その他 ========== -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-header">
+      <div class="chapter-num">06</div>
+      <div class="chapter-title-block">
+        <h2>その他・ユーティリティ</h2>
+        <p class="chapter-desc">AI・決済・自動化系のツール。AIプロダクト開発・サービス販売・業務連携に幅広く活用される。</p>
+        <span class="chapter-count">3 TOOLS</span>
+      </div>
+    </div>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">🤖</div>
+        <div class="term-name-block">
+          <div class="term-name">OpenAI</div>
+          <div class="term-en">OpenAI, L.L.C.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>ChatGPTやGPT-4を提供するAI企業。APIを通じて多様なAI機能を自社サービスに組み込める業界標準のAI API。</p></div>
+      <p class="term-detail">テキスト生成・画像生成・音声認識・埋め込み（Embedding）など多様なAI機能を提供。<strong>AI機能の外部組み込みにおける業界標準</strong>として、多くのSaaSやアプリに内蔵されている。ClaudeのAPIと並んで、AIコンサルが最も頻繁に提案する外部AI API。</p>
+      <div class="term-scene">① テキスト生成・チャット応答（カスタムAIアシスタント・自動返信ボットの構築）／② DALL-E APIによる画像生成（テキストプロンプトからビジュアルを自動作成）／③ Embeddingによるテキストのベクトル化（類似検索・RAG構築の基盤）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">💳</div>
+        <div class="term-name-block">
+          <div class="term-name">Stripe</div>
+          <div class="term-en">Stripe, Inc.</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>開発者フレンドリーなオンライン決済プラットフォーム。AIコンサルのサービス販売・サブスクリプション管理の基盤として最もよく使われる。</p></div>
+      <p class="term-detail">クレジットカード・銀行振込・定期課金・マーケットプレイス決済など幅広い決済形式に対応。<strong>APIのドキュメントが充実しており、エンジニアに最も選ばれている決済プラットフォーム</strong>。AIコンサルのサービス販売・BOOTHでの商品販売・サブスクリプション管理の基盤として直接活用できる。</p>
+      <div class="term-scene">① 決済リンク・請求書の自動発行（受注後の請求処理を完全自動化）／② サブスクリプションの作成・プラン変更・解約処理（定期課金の管理）／③ 入金状況・売上レポートの取得（経理・財務レポートの自動生成）</div>
+    </article>
+
+    <article class="term">
+      <div class="term-head">
+        <div class="term-icon">⚡</div>
+        <div class="term-name-block">
+          <div class="term-name">IFTTT</div>
+          <div class="term-en">IFTTT Inc. ／ If This Then That</div>
+        </div>
+      </div>
+      <div class="term-hitokoto"><p>「もしAが起きたらBをする」を自動化するプラットフォーム。プログラミング不要で700以上のサービスをつなげる入門向け自動化ツール。</p></div>
+      <p class="term-detail">異なるWebサービスを「トリガー→アクション」の形でつなぐ自動化プラットフォーム。<strong>プログラミング不要で700以上のサービスを連携でき</strong>、業務自動化の入門として最適。非エンジニアのクライアントに「まず試してみましょう」と提案しやすい自動化ツールの代表格。</p>
+      <div class="term-scene">① Webhookトリガーの発火（外部システムからIFTTTアプレットを任意に起動）／② アプレット（自動化レシピ）の有効化・無効化（シナリオの動的切り替え）／③ サービス連携状況・実行履歴の取得（自動化の監視・エラー検知）</div>
+    </article>
+  </section>
+
+  <!-- ========== API活用パターン早見表 ========== -->
+  <section class="cmd-section" id="cmd">
+    <div class="chapter-header">
+      <div class="chapter-num">+</div>
+      <div class="chapter-title-block">
+        <h2>API活用パターン早見表</h2>
+        <p class="chapter-desc">「どんな目的でAPIを使うか」の典型パターンをまとめました。Claude Codeへの指示のヒントにも使えます。</p>
+        <span class="chapter-count">QUICK REFERENCE</span>
+      </div>
+    </div>
+
+    <div class="cmd-table">
+      <div class="cmd-row"><div class="cmd-key">通知の自動化</div><div class="cmd-desc">特定のイベント発生時にSlackやTeamsへ自動投稿。障害通知・承認依頼・レポート配信などに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">データの収集</div><div class="cmd-desc">CRMや分析ツールのAPIからデータを取得して集計・可視化。手動のコピペ作業をゼロに。</div></div>
+      <div class="cmd-row"><div class="cmd-key">レコードの自動登録</div><div class="cmd-desc">フォーム入力・Webhook受信をトリガーに、NotionやAirtableへ自動でデータを書き込む。</div></div>
+      <div class="cmd-row"><div class="cmd-key">ファイルの自動配置</div><div class="cmd-desc">生成した資料・レポートを決まったフォルダに自動保存。命名ルールも統一できる。</div></div>
+      <div class="cmd-row"><div class="cmd-key">メール・メッセージ配信</div><div class="cmd-desc">条件に合った顧客リストへの自動メール送信。セグメント・タイミングの完全自動化。</div></div>
+      <div class="cmd-row"><div class="cmd-key">決済・請求の自動化</div><div class="cmd-desc">Stripeと連携して受注→請求→入金確認→完了通知まで全工程を自動処理。</div></div>
+      <div class="cmd-row"><div class="cmd-key">AI機能の組み込み</div><div class="cmd-desc">既存サービスにClaude/OpenAI APIを加えて、文章生成・分析・翻訳機能を追加する。</div></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>APIを知ると、自動化の設計図が描けるようになる</h2>
+    <p>「このツールにAPIがある」と知っているだけで、業務改善の発想が大きく変わります。</p>
+    <p>「Notionにデータが入ったら→Slackに通知→Stripeで請求を発行」という一連の流れも、それぞれのAPIをつなぐことで実現できます。Claude CodeはこうしたAPIを代わりに呼び出してくれる存在です。</p>
+    <p>次のVol.05では、APIをさらに進化させた<strong>「MCP（Model Context Protocol）」対応ツール</strong>を紹介します。APIとMCPの決定的な違いも、Vol.05を読めばスッキリします。</p>
+
+    <div class="closing-steps">
+      <h3>今日の次のステップ</h3>
+      <ol>
+        <li>今使っているツール（Slack・Notion・Google Driveなど）のAPIドキュメントを1つ開いて、どんな操作ができるか眺めてみる</li>
+        <li>「毎回手でやっている作業」を1つ思い浮かべ、そこに使っているツールのAPIで自動化できるか考えてみる</li>
+        <li>Vol.05（MCPがあるツール一覧）に進んで、APIとMCPの違いを確認する</li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-mark">Master Glossary Series</div>
+  <div class="footer-brand">NEWXUS</div>
+  <div class="footer-meta">Vol.04 ／ APIが存在するツール一覧 ／ Produced by NEWXUS</div>
+</footer>
+
+</body>
+</html>
